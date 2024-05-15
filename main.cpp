@@ -1,5 +1,5 @@
 #include "server.hpp"
-
+#include "client.hpp"
 
 int main(int ac, char **av)
 {
@@ -10,6 +10,8 @@ int main(int ac, char **av)
     }
 
     Server sev(av[1], av[2]);
+    client cli;
 
     sev.initsever(sev);
+    cli.connect_to_server();
 }

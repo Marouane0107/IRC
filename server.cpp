@@ -1,4 +1,5 @@
 #include "server.hpp"
+#include "client.hpp"
 
 void    Server::set_port(std::string const port)
 {
@@ -43,7 +44,6 @@ void    Server::CreateSock(Server &sev)
 
 void    Server::BindSocket(Server &sev)
 {
-    struct sockaddr_in add;
     int en = 1;
     memset(&add, 0, sizeof(add));
     add.sin_family = AF_INET;

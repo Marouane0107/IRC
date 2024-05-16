@@ -1,17 +1,10 @@
+#include "server.hpp"
 #include "client.hpp"
 
 client::client()
 {
-	_nickname = "Mar_1";
-	_username = "marouane";
-}
-
-client::client(std::string name, std::string nickname, std::string port, std::string address)
-{
-	this->_nickname = nickname;
-	this->_username = name;
-    this->_port = port;
-    this->_address = address;
+	_username = "user_" + std::to_string(rand() % 10000);
+	_nickname = "nick_" + std::to_string(rand() % 10000);
 }
 
 client::~client(){	
@@ -37,37 +30,84 @@ std::string client::get_port()
 	return (_port);
 }
 
-int client::connect_to_server(client cli)
+void	client::set_username(std::string username)
 {
-    int client_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (client_fd == -1) {
-        perror("socket");
-        return -1;
-    }
-    else
-    {
-        std::cout << "CLient accept\n";
-    }
+	_username = username;
+}
 
-    struct sockaddr_in server_addr;
-    memset(&server_addr, 0, sizeof(server_addr));
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(std::stoi(cli._port));
-    if (inet_pton(AF_INET, cli._address.c_str(), &server_addr.sin_addr) <= 0) {
-        perror("inet_pton");
-        close(client_fd);
-        return -1;
-    }
-    else
-        std::cout << "inet_pton work\n";
+void	client::set_nickname(std::string nickname)
+{
+	_nickname = nickname;
+}
 
-    if (connect(client_fd, reinterpret_cast<struct sockaddr *>(&server_addr), sizeof(server_addr)) == -1) {
-        perror("connect");
-        close(client_fd);
-        return -1;
-    }
-    else
-        std::cout << "client connect\n";
+void	client::set_address(std::string address)
+{
+	_address = address;
+}
 
-    return client_fd;
+void	client::set_port(std::string port)
+{
+	_port = port;
+}
+
+int check_ip_port(std::string input)
+{
+	size_t i = 0;
+	size_t start = 0;
+	size_t end = 0;
+	std::string ip;
+	std::string port;
+	while (end < input.length() && input[end] != '\0' && input[end] != '\n')
+	{
+		while (input.length() > 0 && input[start] == ' ' && start < input.length())
+			start++;
+		end = start;
+		while(input.length() > 0 && input[end] != '\0' && input[end] != ' ' && input[end] != '\n' && end < input.length())
+			end++;
+		if (i == 0)
+			ip = input.substr(start, end);
+		if (i == 1)
+			port = input.substr(start, end);
+		start = end;
+		i++;
+	}
+	if (i != 2)
+		return (1);
+	// need to check if ip and port are valid
+	// ------------------------------------------------ //
+	return (0);
+}
+
+int client::check_input(std::string input, int fd)
+{
+	// parse input and check if it is a valid command
+	size_t start = 0;
+	while (input.length() > 0 && input[start] == ' ' && start < input.length())
+	{
+		start++;
+	}
+	size_t end = start;
+	while(input.length() > 0 && input[end] != '\0' && input[end] != ' ' && input[end] != '\n' && end < input.length())
+	{
+		end++;
+	}
+	if ( strcmp(input.substr(start, end ).c_str(), "/connect") == 0 && check_ip_port(input.substr(end, input.length())) == 0)
+	{
+		send(fd, "you have been connected to the server successfully :) \n", 56, 0);
+		send(fd, "Please enter a command to continue...\n", 39, 0);
+		return (0);
+	}
+	else
+	{
+		send(fd, "Invalid command. Please use : /connect <address> <port> - Connect to a server first :( \n", 89, 0);
+		return (1);
+	}
+	return (0);
+}
+
+void	client::parse_cmd(int fd)
+{
+	char buffer[MAX_BUFFER_SIZE];
+	recv(fd, buffer, MAX_BUFFER_SIZE, 0);
+	check_input(buffer, fd);
 }

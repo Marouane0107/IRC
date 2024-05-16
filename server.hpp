@@ -12,8 +12,6 @@
 #include <arpa/inet.h>
 #include <sys/epoll.h>
 
-extern struct sockaddr_in add;
-
 class Server
 {
     private:
@@ -38,5 +36,5 @@ class Server
         void    a_new(Server &sev);
         void    o_file(int fd);
 };
-// struct sockaddr_in add;
+
 #endif

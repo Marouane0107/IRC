@@ -1,5 +1,4 @@
 #include "server.hpp"
-#include "client.hpp"
 
 void    Server::set_port(std::string const port)
 {
@@ -44,6 +43,7 @@ void    Server::CreateSock(Server &sev)
 
 void    Server::BindSocket(Server &sev)
 {
+    struct sockaddr_in add;
     int en = 1;
     memset(&add, 0, sizeof(add));
     add.sin_family = AF_INET;
@@ -126,7 +126,8 @@ void Server::initsever(Server &sev)
     lisenSocket(sev);
 
     int epoll_fd = epoll_create1(0);
-    if (epoll_fd == -1) {
+    if (epoll_fd == -1)
+    {
         perror("epoll_create1");
         exit(4);
     }
@@ -155,7 +156,7 @@ void Server::initsever(Server &sev)
         }
         for (int i = 0; i < num_events; ++i)
         {
-            if (events[i].events & EPOLLIN) { 
+            if (events[i].events && EPOLLIN) { 
                 if (events[i].data.fd == sev.socketfile)
                     a_new(sev);
                 else
@@ -164,30 +165,3 @@ void Server::initsever(Server &sev)
         }
     }   
 }
-
-// void    Server::initsever(Server &sev)
-// {
-//     CreateSock(sev);
-//     BindSocket(sev);
-//     lisenSocket(sev);
-//     fd_set rfds;
-//     while(1)
-//     {
-//         FD_ZERO(&rfds);
-//         FD_SET(sev.socketfile, &rfds);
-//         int ret = select(sev.socketfile + 1, &rfds, NULL, NULL, NULL);
-//         if (ret == -1)
-//         {
-//             std::cout << "error in select" << std::endl;
-//             exit (4);
-//         }
-//         for (int i = 0; i <= 1024; ++i)
-//         {
-//             if (FD_ISSET(i, &rfds))
-//             { 
-//                 if (i == sev.socketfile)
-//                     a_new(sev);
-//             }
-//         }
-//     }   
-// }

@@ -14,14 +14,17 @@ class client
 	private:
 		std::string _username;
 		std::string _nickname;
-
+        std::string _port;
+        std::string _address;
 	public:
 		client();
-		client(std::string name, std::string nickname);
+		client(std::string name, std::string nickname, std::string port, std::string address);
 		~client();
 		std::string	get_username();
 		std::string	get_nickname();
-		int	connect_to_server();
+        std::string get_port();
+        std::string get_address();
+		int	connect_to_server(client cli);
 };
 
 

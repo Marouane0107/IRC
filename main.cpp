@@ -30,5 +30,6 @@ int main(int ac, char **av)
     // std::cout << cli.get_port() << std::endl;
     // std::cout << cli.get_address() << std::endl;
     sev.initsever(sev);
-    //cli.connect_to_server(cli);
+
+    return 0;
 }

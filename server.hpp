@@ -24,10 +24,13 @@ class Server
         int lisensocket;
         int acceptsocket;
     public:
+        void    set_password(std::string const pass);
         void    set_port(std::string const port);
         void    set_address(std::string const address);
         std::string const get_port();
+        std::string const get_password();
         std::string const get_address();
+        Server();
         Server(std::string port, std::string pass);
         void    initsever(Server &sev);
         void    CreateSock(Server &sev);

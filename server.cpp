@@ -1,6 +1,8 @@
 #include "server.hpp"
 #include "client.hpp"
 
+Server::Server(){
+}
 
 void    Server::set_port(std::string const port)
 {
@@ -20,6 +22,16 @@ std::string const Server::get_port()
 std::string const Server::get_address()
 {
 	return (this->_address);
+}
+
+std::string const Server::get_password()
+{
+	return (this->_pass);
+}
+
+void    Server::set_password(std::string const pass)
+{
+	this->_pass = pass;
 }
 
 Server::Server(std::string port, std::string pass)
@@ -99,8 +111,8 @@ void    Server::a_new(Server &sev)
 	else
 	{
 		std::cout << "accept is work" << std::endl;
-		//  here need to check if the client should be accepted
-		user.parse_cmd(sev.acceptsocket);
+		//   here need to check if the client should be accepted   
+		user.parse_cmd(sev.acceptsocket, sev);
 	}
 	if (fcntl(sev.acceptsocket, F_SETFL, O_NONBLOCK) == -1)
 	{

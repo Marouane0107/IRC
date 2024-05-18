@@ -91,7 +91,7 @@ int check_ip_port(int fd, std::string input, Server &sev)
 	size_t end = 0;
 	std::string ip = sev.get_address();
 	std::string port = sev.get_port();
-	std::string pass = sev.get_password();
+	std::string pass = sev.get_pass();
 	while (end < input.length() && input[end] != '\0' && input[end] != '\n')
 	{
 		start = skep_space(input, start);
@@ -201,6 +201,7 @@ int client::check_input(std::string input, int fd, Server &sev)
 	}
 	if (input.substr(start, end) == "/connect" && check_ip_port(fd , input.substr(end, input.length() - end -1), sev) == 0)
 	{
+		sev.set_cout(1);
 		send(fd, "You have been connected to the server successfully :) \n", 56, 0);
 		std::cout << "A new client is connected" << std::endl;
 		send(fd, "Please enter a command to continue...\n", 39, 0);
@@ -227,6 +228,22 @@ void	client::help(int fd)
 	putstr_fd(fd, "+--------------------------------------------------------------+\n");
 }
 
+// void	client::parse_cmd(int fd, Server &sev)
+// {
+// 	char buffer[MAX_BUFFER_SIZE];
+// 	memset(buffer, 0, sizeof(buffer));
+// 	recv(fd, buffer, MAX_BUFFER_SIZE, 0);
+// 	while (check_input(buffer, fd, sev) == 1)
+// 	{
+// 		memset(buffer, 0, sizeof(buffer));
+// 		recv(fd, buffer, MAX_BUFFER_SIZE, 0);
+// 	}
+// 	set_index(fd - 3);
+// 	memset(buffer, 0, sizeof(buffer));
+// 	recv(fd, buffer, MAX_BUFFER_SIZE, 0);
+// 	check_cmd(fd, buffer);
+// }
+
 void	client::parse_cmd(int fd, Server &sev)
 {
 	char buffer[MAX_BUFFER_SIZE];
@@ -242,8 +259,6 @@ void	client::parse_cmd(int fd, Server &sev)
 	recv(fd, buffer, MAX_BUFFER_SIZE, 0);
 	check_cmd(fd, buffer);
 }
-
-
 
 // clients need to be listed in a vector and the server should be able to send messages to all clients
 

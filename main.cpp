@@ -27,9 +27,5 @@ int main(int ac, char **av)
     }
     check_port(av[1]);
     Server sev(av[1], av[2]);
-    // std::cout << cli.get_port() << std::endl;
-    // std::cout << cli.get_address() << std::endl;
-    sev.initsever(sev);
-
-    return 0;
+    sev.InitServer(sev);
 }

@@ -18,26 +18,23 @@ class Server
         std::string _port;
         std::string _pass;
         std::string _address;
-        int in_port;
         int socketfile;
-        int bindsocket;
-        int lisensocket;
         int acceptsocket;
+        int epoll_fd;
+        int in_port;
+        int cout;
     public:
-        void    set_password(std::string const pass);
-        void    set_port(std::string const port);
-        void    set_address(std::string const address);
-        std::string const get_port();
-        std::string const get_password();
-        std::string const get_address();
-        Server();
+        void    set_cout(int _cout);
+        std::string const get_port() const;
+        std::string const get_address() const;
+        std::string const get_pass() const;
         Server(std::string port, std::string pass);
-        void    initsever(Server &sev);
-        void    CreateSock(Server &sev);
-        void    lisenSocket(Server &sev);
-        void    BindSocket(Server &sev);
-        void    a_new(Server &sev);
-        void    o_file(int fd);
+        void InitServer(Server &sev);
+        void CreateSock();
+        void BindSocket();
+        void ListenSocket();
+        void AcceptConnection();
+        void HandleEvent(int fd, Server &sev);
 };
 
-#endif
+#endif // SERVER_HPP

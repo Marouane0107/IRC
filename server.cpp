@@ -1,186 +1,172 @@
 #include "server.hpp"
 #include "client.hpp"
 
-Server::Server(){
+void    Server::set_cout(int _cout)
+{
+    cout = _cout;
 }
 
-void    Server::set_port(std::string const port)
+std::string const Server::get_port() const
 {
-	this->_port = port;
+    return (this->_port);
 }
 
-void    Server::set_address(std::string const address)
+std::string const Server::get_address() const
 {
-	this->_address = address;
+    return (this->_address);
 }
 
-std::string const Server::get_port()
+std::string const Server::get_pass() const
 {
-	return (this->_port);
-}
-
-std::string const Server::get_address()
-{
-	return (this->_address);
-}
-
-std::string const Server::get_password()
-{
-	return (this->_pass);
-}
-
-void    Server::set_password(std::string const pass)
-{
-	this->_pass = pass;
+    return (this->_pass);
 }
 
 Server::Server(std::string port, std::string pass)
 {
-	_port = port;
-	_pass = pass;
-	_address = "127.0.0.1";
-	socketfile = -1;
-	in_port = atoi(_port.c_str());
+    _port = port;
+    _pass = pass;
+    _address = "127.0.0.1";
+    socketfile = -1;
+    in_port = atoi(_port.c_str());
 }
 
-void    Server::CreateSock(Server &sev)
+void Server::CreateSock()
 {
-	sev.socketfile = socket(AF_INET, SOCK_STREAM, 0);
-	if (sev.socketfile == -1)
-	{
-		std::cerr << "error in creating socket" << std::endl;
-		exit (1);
-	}
-	else
-		std::cout << "GOOD :)" << std::endl;
+    socketfile = socket(AF_INET, SOCK_STREAM, 0);
+    if (socketfile == -1)
+    {
+        std::cerr << "Error creating socket: " << strerror(errno) << std::endl;
+        exit(1);
+    }
+    std::cout << "Socket created: " << socketfile << std::endl;
 }
 
-void    Server::BindSocket(Server &sev)
+void Server::BindSocket()
 {
-	struct sockaddr_in add;
-	int en = 1;
-	memset(&add, 0, sizeof(add));
-	add.sin_family = AF_INET;
-	add.sin_port = htons(sev.in_port);
-	add.sin_addr.s_addr = inet_addr(sev._address.c_str());
-	if(setsockopt(sev.socketfile, SOL_SOCKET, SO_REUSEADDR, &en, sizeof(en)) == -1)
-	{
-		std::cout << "error in bind" << std::endl;
-		exit (-1);
-	}
-	if (fcntl(sev.socketfile, F_SETFL, O_NONBLOCK) == -1)
-	{
-		std::cout << "error in bind" << std::endl;
-		exit (-2);
-	}
-	sev.bindsocket = bind(sev.socketfile, (struct sockaddr *) &add, sizeof(add));
-	std::cout << sev.socketfile << std::endl;
-	if (sev.bindsocket == -1)
-	{
-		perror("bind");
-		exit (2);
-	}
-	else
-		std::cout << "that good" << std::endl;
+    struct sockaddr_in add;
+    int en = 1;
+    memset(&add, 0, sizeof(add));
+    add.sin_family = AF_INET;
+    add.sin_port = htons(in_port);
+    add.sin_addr.s_addr = inet_addr(_address.c_str());
+    if (setsockopt(socketfile, SOL_SOCKET, SO_REUSEADDR, &en, sizeof(en)) == -1)
+    {
+        std::cerr << "Error in setsockopt: " << strerror(errno) << std::endl;
+        exit(-1);
+    }
+
+    if (fcntl(socketfile, F_SETFL, O_NONBLOCK) == -1)
+    {
+        std::cerr << "Error in fcntl: " << strerror(errno) << std::endl;
+        exit(-2);
+    }
+
+    if (bind(socketfile, (struct sockaddr*)&add, sizeof(add)) == -1)
+    {
+        std::cerr << "Error in bind: " << strerror(errno) << std::endl;
+        exit(2);
+    }
+    std::cout << "Socket bound successfully" << std::endl;
 }
 
-void    Server::lisenSocket(Server &sev)
+void Server::ListenSocket()
 {
-	sev.lisensocket = listen(sev.socketfile, 1);
-	if (sev.lisensocket == -1)
-	{
-		std::cout << "Error in listen" << std::endl;
-		exit (3);
-	}
-	else
-		std::cout << "That Good" << std::endl;
+    if (listen(socketfile, SOMAXCONN) == -1)
+    {
+        std::cerr << "Error in listen: " << strerror(errno) << std::endl;
+        exit(3);
+    }
+    std::cout << "Listening on socket" << std::endl;
 }
 
-void    Server::a_new(Server &sev)
+void Server::AcceptConnection()
 {
-	struct sockaddr_in add;
-	client user;
+    struct sockaddr_in add;
+    socklen_t len = sizeof(add);
+    acceptsocket = accept(socketfile, (struct sockaddr*)&add, &len);
+    if (acceptsocket == -1)
+    {
+        std::cerr << "Error in accept: " << strerror(errno) << std::endl;
+        return;
+    }
+    std::cout << "Accepted connection: " << acceptsocket << std::endl;
+    if (fcntl(acceptsocket, F_SETFL, O_NONBLOCK) == -1)
+    {
+        std::cerr << "Error in fcntl: " << strerror(errno) << std::endl;
+        return;
+    }
 
-	socklen_t len = sizeof(add);
-	sev.acceptsocket = accept(sev.socketfile, (struct sockaddr *) &add, &len);
-	if (sev.acceptsocket == -1)
-	{
-		std::cout << "error accepte" << std::endl;
-		exit (5);
-	}
-	else
-	{
-		std::cout << "accept is work" << std::endl;
-		//   here need to check if the client should be accepted   
-		user.parse_cmd(sev.acceptsocket, sev);
-	}
-	if (fcntl(sev.acceptsocket, F_SETFL, O_NONBLOCK) == -1)
-	{
-		std::cout << "fcntl() failed" << std::endl;
-		exit (7);
-	}
-	else
-		std::cout << "fcntl() work" << std::endl;
+    epoll_event ev;
+    ev.events = EPOLLIN;
+    ev.data.fd = acceptsocket;
+    if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, acceptsocket, &ev) == -1)
+        std::cerr << "Error in epoll_ctl: " << strerror(errno) << std::endl;
 }
 
-void    Server::o_file(int fd)
+void Server::HandleEvent(int fd, Server &sev)
 {
-	char buff[1024];
-	memset(buff, 0, sizeof(buff));
-	ssize_t bytes = recv(fd, buff, sizeof(buff) - 1, 0);
-	if (bytes <= 0)
-	{
-		std::cout << "Client <" << fd << "> Disconnected" << std::endl;
-		close(fd);
-	}
-	else
-		std::cout << "recv work" << std::endl;
+    client user;
 
+    char buff[1024];
+    memset(buff, 0, sizeof(buff));
+    ssize_t bytes = recv(fd, buff, sizeof(buff) - 1, 0);
+    if (bytes <= 0)
+    {
+        std::cout << "Client <" << fd << "> Disconnected" << std::endl;
+        close(fd);
+    }
+    else
+    {
+        std::cout << "Received data: " << sizeof(buff) << "      " << fd << "    "<< buff << std::endl;
+        if(sev.cout == 0)
+            if (user.check_input(buff, fd, sev) == 1)
+                return ;
+        //user.set_index(fd - 3);
+        user.check_cmd(fd, buff);
+    }
+    
 }
 
-void Server::initsever(Server &sev)
+void Server::InitServer(Server &sev)
 {
-	CreateSock(sev);
-	BindSocket(sev);
-	lisenSocket(sev);
+    CreateSock();
+    BindSocket();
+    ListenSocket();
 
-	int epoll_fd = epoll_create1(0);
-	if (epoll_fd == -1)
-	{
-		perror("epoll_create1");
-		exit(4);
-	}
-	else
-		std::cout << "epoll is created" << std::endl;
-	struct epoll_event event;
-	event.events = EPOLLIN;
-	event.data.fd = sev.socketfile;
-	if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, sev.socketfile, &event) == -1)
-	{
-		perror("epoll_ctl");
-		exit(5);
-	}
-	while(1)
-	{
-		struct epoll_event events[10];
-		int num_events = epoll_wait(epoll_fd, events, 10, -1);
-		if (num_events == -1)
-		{
-			perror("epoll_wait");
-			exit(6);
-		}
-		else
-		{
-			std::cout << "that good wait poll " << num_events << std::endl;
-		}
-		for (int i = 0; i < num_events; ++i)
-		{
-			if (events[i].events && EPOLLIN) { 
-				if (events[i].data.fd == sev.socketfile)
-					a_new(sev);
-				else
-					o_file(events[i].data.fd);
-			}
-		}
-	}   
+    epoll_fd = epoll_create1(0);
+    if (epoll_fd == -1)
+    {
+        std::cerr << "Error in epoll_create1: " << strerror(errno) << std::endl;
+        exit(4);
+    }
+    std::cout << "Epoll created" << std::endl;
+
+    epoll_event event;
+    sev.cout = 0;
+    event.events = EPOLLIN;
+    event.data.fd = socketfile;
+    if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, socketfile, &event) == -1)
+    {
+        std::cerr << "Error in epoll_ctl: " << strerror(errno) << std::endl;
+        exit(5);
+    }
+
+    while (1)
+    {
+        epoll_event events[10];
+        int num_events = epoll_wait(epoll_fd, events, 10, -1);
+        if (num_events == -1)
+        {
+            std::cerr << "Error in epoll_wait: " << strerror(errno) << std::endl;
+            exit(6);
+        }
+
+        for (int i = 0; i < num_events; ++i)
+        {
+            if (events[i].data.fd == socketfile)
+                AcceptConnection();
+            else if (events[i].events & EPOLLIN)
+                HandleEvent(events[i].data.fd, sev);
+        }
+    }
 }

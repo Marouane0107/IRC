@@ -1,6 +1,8 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include "client.hpp"
+
 #include <iostream>
 #include <string>
 #include <string.h>
@@ -11,6 +13,8 @@
 #include <fcntl.h>
 #include <arpa/inet.h>
 #include <sys/epoll.h>
+
+class client;
 
 class Server
 {
@@ -34,7 +38,7 @@ class Server
         void BindSocket();
         void ListenSocket();
         void AcceptConnection();
-        void HandleEvent(int fd, Server &sev);
+        void HandleEvent(int fd, Server &sev, client &user);
 };
 
 #endif // SERVER_HPP

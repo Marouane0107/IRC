@@ -3,9 +3,19 @@
 
 #include "server.hpp"
 
-#include <iostream>
 #include <string>
 #include <vector>
+
+#include <iostream>
+#include <chrono>
+#include <thread>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <cerrno>
+
+
 const int MAX_CLIENTS = 100; // Maximum number of clients
 const int MAX_BUFFER_SIZE = 1024; // Maximum size of buffer for receiving messages
 

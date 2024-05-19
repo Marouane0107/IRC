@@ -166,7 +166,7 @@ void	client::check_cmd(int fd, std::string input)
 	size_t end = start;
 	while(input.length() > 0 && input[end] != '\0' && input[end] != ' ' && input[end] != '\n' && end < input.length())
 		end++;
-	if (input.substr(start, end) == "/nick") ///// ----------- /nick <nickname> ------------------------
+	if (input.substr(start, end) == "/nick" && !is_one_param(input)) ///// ----------- /nick <nickname> ------------------------
 	{
 		putstr_fd(fd, "Plase enter you'r nickname\n");
 		ft_recv(fd, buffer);
@@ -182,7 +182,7 @@ void	client::check_cmd(int fd, std::string input)
 		putstr_fd(fd, "Your nickname has been set successfully to: ");
 		putstr_fd(fd, get_nickname(index));
 	}
-	else if (input.substr(start, end) == "/user") ////// --------- /user <username> -------------------
+	else if (input.substr(start, end) == "/user" && !is_one_param(input)) ////// --------- /user <username> -------------------
 	{
 		putstr_fd(fd, "Plase enter you'r new username\n");
 		ft_recv(fd, buffer);
@@ -198,7 +198,7 @@ void	client::check_cmd(int fd, std::string input)
 		putstr_fd(fd, "Your username has been changed successfully to: ");
 		putstr_fd(fd, get_username(index));
 	}
-	else if (input.substr(start, end) == "/realname") ////// --------- /realname <realname> --------------------recv need to be fixed !!
+	else if (input.substr(start, end) == "/realname" && !is_one_param(input)) ////// --------- /realname <realname> --------------------recv need to be fixed !!
 	{
 		putstr_fd(fd, "Plase enter you'r new realname\n");
 		ft_recv(fd, buffer);
@@ -214,13 +214,13 @@ void	client::check_cmd(int fd, std::string input)
 		putstr_fd(fd, "Your realname has been changed successfully to: ");
 		putstr_fd(fd, get_realname(index));
 	}
-	else if (input.substr(start, end) == "/quit") ////// --------- /quit --------------------
+	else if (input.substr(start, end) == "/quit" && !is_one_param(input)) ////// --------- /quit --------------------
 	{
 		putstr_fd(fd, "You have been disconnected from the server successfully\n");
 		std::cout << "A client has been disconnected" << std::endl;
 		close(fd);
 	}
-	else if (input.substr(start, end) == "/help") ////// --------- /help --------------------
+	else if (input.substr(start, end) == "/help" && !is_one_param(input)) ////// --------- /help --------------------
 		help(fd);
 	else if (input.substr(start, end) == "/connect")
 		putstr_fd(fd, "You are already connected to the server\n");
@@ -249,14 +249,13 @@ int client::check_input(std::string input, int fd, Server &sev)
 	size_t end = start;
 	while(input.length() > 0 && input[end] != '\0' && input[end] != ' ' && input[end] != '\n' && end < input.length())
 		end++;
-	if (input.substr(start, end) == "/help")
+	if (input.substr(start, end) == "/help" && !is_one_param(input))
 	{
 		help(fd);
 		return (1);
 	}
 	if (input.substr(start, end) == "/connect" && check_ip_port(fd , input.substr(end, input.length() - end -1), sev) == 0)
 	{
-		sev.set_cout(1);
 		send(fd, "You have been connected to the server successfully :) \n", 56, 0);
 		std::cout << "A new client is connected" << std::endl;
 		set_client(fd);
@@ -313,4 +312,3 @@ int		client::check_if_aviable(std::string input, std::string* list)
 	}
 	return (0);
 }
-

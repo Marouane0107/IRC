@@ -117,7 +117,7 @@ void Server::HandleEvent(int fd, Server &sev, client &user)
 	else
 	{
 		std::cout << "Received data: " << sizeof(buff) << "      " << fd << "    "<< buff << std::endl;
-		if(sev.cout == 0)
+		if(user.get_index_client(fd)  == -1)
 		{
 			if (user.check_input(buff, fd, sev) == 1)
 				return ;
@@ -132,7 +132,6 @@ void Server::HandleEvent(int fd, Server &sev, client &user)
 
 void Server::InitServer(Server &sev)
 {
-	//int index = 0;
 	CreateSock();
 	BindSocket();
 	ListenSocket();
@@ -150,7 +149,6 @@ void Server::InitServer(Server &sev)
 	std::cout << "Epoll created" << std::endl;
 
 	epoll_event event;
-	sev.cout = 0;
 	event.events = EPOLLIN;
 	event.data.fd = socketfile;
 	if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, socketfile, &event) == -1)
@@ -172,11 +170,7 @@ void Server::InitServer(Server &sev)
 		for (int i = 0; i < num_events; ++i)
 		{
 			if (events[i].data.fd == socketfile)
-			{
 				AcceptConnection();
-				// if (index < MAX_CLIENTS)
-				// 	index++;
-			}
 			else if (events[i].events & EPOLLIN)
 				HandleEvent(events[i].data.fd, sev, user);
 		}

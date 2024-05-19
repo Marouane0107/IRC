@@ -53,3 +53,15 @@ char*	ft_recv(int fd, char *buffer)
 	}
 	return (buffer);
 }
+
+int	is_one_param(std::string input)
+{
+	size_t start = skep_space(input, 0);
+	size_t end = start;
+	while(input.length() > 0 && input[end] != '\0' && input[end] != ' ' && input[end] != '\n' && end < input.length())
+		end++;
+	end = skep_space(input, end);
+	if (input[end] == '\0' || input[end] == '\n')
+		return (0);
+	return (1);
+}

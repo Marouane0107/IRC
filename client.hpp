@@ -51,6 +51,7 @@ class client
 
 std::string	get_str_no_space(std::string input);
 char*		ft_recv(int fd, char *buffer);
+int			is_one_param(std::string input);
 int			get_len_no_space(std::string input, size_t start);
 int			skep_space(std::string input, size_t start);
 void		putstr_fd(int fd, std::string str);

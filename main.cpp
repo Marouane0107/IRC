@@ -5,16 +5,16 @@ void    check_port(std::string av)
 {
     int port;
 
-    port = atoi(av.c_str());
+    port = std::atoi(av.c_str());
     if (port > 0 && port < 1024)
     {
         std::cout << av << " this port is private" << std::endl;
-        exit(1);
+        std::exit(1);
     }
     if (port < 0 || port > 65536)
     {
         std::cout << av << " you can't use this port" << std::endl;
-        exit(1);
+        std::exit(1);
     }
 }
 

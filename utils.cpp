@@ -40,3 +40,16 @@ std::string	get_str_no_space(std::string input)
 	name = input.substr(start, get_len_no_space(input, start));
 	return (name);
 }
+
+
+char*	ft_recv(int fd, char *buffer)
+{
+	while (true)
+	{
+		memset(buffer, 0, MAX_BUFFER_SIZE);
+		recv(fd, buffer, MAX_BUFFER_SIZE, 0);
+		if (strlen(buffer) > 0)
+			break;
+	}
+	return (buffer);
+}

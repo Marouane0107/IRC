@@ -72,11 +72,11 @@ void	client::set_client(int fd)
 	int index = 0;
 	while (index < MAX_CLIENTS)
 	{
-		if (_fd[index] < 0 )
+		if (_fd[index] <= 0 )
 		{
 			_fd[index] = fd;
 			_username[index] = "user_";
-			_nickname[index] = "nick_";
+			_nickname[index] = "usernick_";
 			_realname[index] = "Unknown";
 			return ;
 		}
@@ -155,6 +155,11 @@ int client::get_fd_by_nickname(std::string nickname)
 void	client::check_cmd(int fd, std::string input)
 {
 	int index = get_index_client(fd);
+	if (index == -1)
+	{
+		putstr_fd(fd, "You are not connected to the server, use /help for more information\n");
+		return ;
+	}
 	char buffer[MAX_BUFFER_SIZE];
 	bzero(buffer, sizeof(buffer));
 	size_t start = skep_space(input, 0);
@@ -164,25 +169,14 @@ void	client::check_cmd(int fd, std::string input)
 	if (input.substr(start, end) == "/nick") ///// ----------- /nick <nickname> ------------------------
 	{
 		putstr_fd(fd, "Plase enter you'r nickname\n");
-		while (true) 
-		{
-			recv(fd, buffer, MAX_BUFFER_SIZE, 0);
-			if (strlen(buffer) > 0)
-				break;
-		}
-		while (!check_if_aviable(buffer, _nickname))
+		ft_recv(fd, buffer);
+		while (check_if_aviable(buffer, _nickname))
 		{
 			if (!*buffer)
 				putstr_fd(fd, "Invalid nickname, please enter a valid one\n");
 			else
 				putstr_fd(fd, "This nickname is already taken, please choose another one\n");
-			while (true) 
-			{
-				memset(buffer, 0, sizeof(buffer));
-				recv(fd, buffer, MAX_BUFFER_SIZE, 0);
-				if (strlen(buffer) > 0)
-					break;
-			}
+			ft_recv(fd, buffer);
 		}
 		set_nickname(get_str_no_space(buffer), index);
 		putstr_fd(fd, "Your nickname has been set successfully to: ");
@@ -191,49 +185,34 @@ void	client::check_cmd(int fd, std::string input)
 	else if (input.substr(start, end) == "/user") ////// --------- /user <username> -------------------
 	{
 		putstr_fd(fd, "Plase enter you'r new username\n");
-		while (true) 
-		{
-			recv(fd, buffer, MAX_BUFFER_SIZE, 0);
-			if (strlen(buffer) > 0)
-				break;
-		}
+		ft_recv(fd, buffer);
 		while (check_if_aviable(buffer, _username))
 		{
 			if (!*buffer)
 				putstr_fd(fd, "Invalid username, please enter a valid one\n");
 			else
 				putstr_fd(fd, "This username is already taken, please choose another one\n");
-			while (true)
-			{
-				memset(buffer, 0, sizeof(buffer));
-				recv(fd, buffer, MAX_BUFFER_SIZE, 0);
-				if (strlen(buffer) > 0)
-					break;
-			}
+			ft_recv(fd, buffer);
 		}
 		set_username(buffer, index);
 		putstr_fd(fd, "Your username has been changed successfully to: ");
 		putstr_fd(fd, get_username(index));
-		//putstr_fd(fd, "\n");
 	}
 	else if (input.substr(start, end) == "/realname") ////// --------- /realname <realname> --------------------recv need to be fixed !!
 	{
 		putstr_fd(fd, "Plase enter you'r new realname\n");
-		recv(fd, buffer, MAX_BUFFER_SIZE, 0);
-		while (!check_if_aviable(buffer, _realname))
+		ft_recv(fd, buffer);
+		while (check_if_aviable(buffer, _realname))
 		{
 			if (!*buffer)
-			{
 				putstr_fd(fd, "Invalid realname, please enter a valid one\n");
-				recv(fd, buffer, MAX_BUFFER_SIZE, 0);
-			}
 			else
 				putstr_fd(fd, "This realname is already taken, please choose another one\n");
+			ft_recv(fd, buffer);
 		}
 		set_realname(buffer, index);
 		putstr_fd(fd, "Your realname has been changed successfully to: ");
 		putstr_fd(fd, get_realname(index));
-		//putstr_fd(fd, "\n");
 	}
 	else if (input.substr(start, end) == "/quit") ////// --------- /quit --------------------
 	{
@@ -248,15 +227,15 @@ void	client::check_cmd(int fd, std::string input)
 	else if (input.substr(start, end) == "PRIVMSG") ////// --------- PRIVMSG <nickname> <message> --------------------recv need to be fixed !!
 	{
 		putstr_fd(fd, "Please enter the nickname of the user you want to send a message to\n");
-		recv(fd, buffer, MAX_BUFFER_SIZE, 0);
+		ft_recv(fd, buffer);
 		while (get_fd_by_nickname(buffer) == -1)
 		{
 			putstr_fd(fd, "This user is not exist, please enter a valid nickname\n");
-			recv(fd, buffer, MAX_BUFFER_SIZE, 0);
+			ft_recv(fd, buffer);
 		}
 		memset(buffer, 0, sizeof(buffer));
 		putstr_fd(fd, "Please enter the message you want to send\n");
-		recv(fd, buffer, MAX_BUFFER_SIZE, 0);
+		ft_recv(fd, buffer);
 		send(get_fd_by_nickname(buffer), buffer, strlen(buffer), 0);
 	}
 	else
@@ -265,7 +244,7 @@ void	client::check_cmd(int fd, std::string input)
 
 int client::check_input(std::string input, int fd, Server &sev)
 {
-	// parse input and check if it is a valid command
+	// parse input and check if it is a valid command to connecte to the server-------------------------------------------------- connect
 	size_t start = skep_space(input, 0);
 	size_t end = start;
 	while(input.length() > 0 && input[end] != '\0' && input[end] != ' ' && input[end] != '\n' && end < input.length())
@@ -281,7 +260,6 @@ int client::check_input(std::string input, int fd, Server &sev)
 		send(fd, "You have been connected to the server successfully :) \n", 56, 0);
 		std::cout << "A new client is connected" << std::endl;
 		set_client(fd);
-		//dprintf(2, "here2\n");
 		send(fd, "Please enter a command to continue...\n", 39, 0);
 		return (0);
 	}
@@ -335,6 +313,4 @@ int		client::check_if_aviable(std::string input, std::string* list)
 	}
 	return (0);
 }
-
-// clients need to be listed in a vector and the server should be able to send messages to all clients
 

@@ -5,15 +5,8 @@
 
 #include <string>
 #include <vector>
-
-#include <iostream>
-#include <chrono>
-#include <thread>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <cerrno>
+#include <cerrno>  // For errno
+#include <cstring> // For strerror
 
 
 const int MAX_CLIENTS = 100; // Maximum number of clients
@@ -57,6 +50,7 @@ class client
 };
 
 std::string	get_str_no_space(std::string input);
+char*		ft_recv(int fd, char *buffer);
 int			get_len_no_space(std::string input, size_t start);
 int			skep_space(std::string input, size_t start);
 void		putstr_fd(int fd, std::string str);

@@ -3,6 +3,7 @@
 
 #include "client.hpp"
 
+#include <cstdlib>
 #include <iostream>
 #include <string>
 #include <string.h>

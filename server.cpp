@@ -21,6 +21,11 @@ std::string const Server::get_pass() const
 	return (this->_pass);
 }
 
+int Server::get_socketfile() const
+{
+	return (this->socketfile);
+}
+
 Server::Server(std::string port, std::string pass)
 {
 	_port = port;
@@ -95,7 +100,6 @@ void Server::AcceptConnection()
 		std::cerr << "Error in fcntl: " << strerror(errno) << std::endl;
 		return;
 	}
-
 	epoll_event ev;
 	ev.events = EPOLLIN;
 	ev.data.fd = acceptsocket;
@@ -137,7 +141,7 @@ void Server::InitServer(Server &sev)
 	ListenSocket();
 	
 	client user;
-	user.init_all(); /// intialize all parameters to 0
+	user.init_all(sev); /// intialize all parameters to 0
 
 
 	epoll_fd = epoll_create1(0);

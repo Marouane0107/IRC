@@ -41,27 +41,60 @@ std::string	get_str_no_space(std::string input)
 	return (name);
 }
 
-
-char*	ft_recv(int fd, char *buffer)
+int	param_count(std::string input)
 {
-	while (true)
+	size_t start = 0;
+	size_t end = 0;
+	int count = 0;
+
+	while (end < input.length() && input[end] != '\0' && input[end] != '\n')
 	{
-		memset(buffer, 0, MAX_BUFFER_SIZE);
-		recv(fd, buffer, MAX_BUFFER_SIZE, 0);
-		if (strlen(buffer) > 0)
-			break;
+		start = skep_space(input, start);
+		end = start;
+		while(input[end] != '\0' && input[end] != ' ' && input[end] != '\n' && end < input.length())
+			end++;
+		start = end;
+		count++;
 	}
-	return (buffer);
+	return (count);
 }
 
-int	is_one_param(std::string input)
+std::string	get_param(std::string input, int param_number)
 {
-	size_t start = skep_space(input, 0);
-	size_t end = start;
+	int i = 1;
+	size_t start = 0;
+	size_t end = 0;
+	
+	while (end < input.length() && input[end] != '\0' && input[end] != '\n')
+	{
+		start = skep_space(input, start);
+		end = start;
+		while(input[end] != '\0' && input[end] != ' ' && input[end] != '\n' && end < input.length())
+			end++;
+		if (i == param_number && param_number == 3)
+		{
+			end = start;
+			while (input[end] != '\0' && end < input.length())
+				end++;
+			return (input.substr(start, end - start));
+		}
+		if (i == param_number)
+			return (input.substr(start, end - start));
+		start = end;
+		i++;
+	}
+	return ("");
+}
+
+std::string	one_by_one(std::string input, size_t *start)
+{
+	size_t end = *start;
+	std::string name;
+
 	while(input.length() > 0 && input[end] != '\0' && input[end] != ' ' && input[end] != '\n' && end < input.length())
 		end++;
-	end = skep_space(input, end);
-	if (input[end] == '\0' || input[end] == '\n')
-		return (0);
-	return (1);
+	name = input.substr(*start, end - *start);
+	*start = end;
+	return (name);
 }
+

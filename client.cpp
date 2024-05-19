@@ -6,6 +6,7 @@ client::client()
 {
 	_port = "0";
 	_address = "127.0.0.1";
+
 }
 
 client::~client(){	
@@ -39,6 +40,11 @@ std::string client::get_address()
 std::string client::get_port()
 {
 	return (_port);
+}
+
+int client::get_socketfile()
+{
+	return (socketfile);
 }
 
 void	client::set_username(std::string username, int index)
@@ -160,83 +166,89 @@ void	client::check_cmd(int fd, std::string input)
 		putstr_fd(fd, "You are not connected to the server, use /help for more information\n");
 		return ;
 	}
-	char buffer[MAX_BUFFER_SIZE];
-	bzero(buffer, sizeof(buffer));
 	size_t start = skep_space(input, 0);
 	size_t end = start;
+	std::string param;
+	if (param_count(input) > 1)
+		param = get_param(input, 2);
 	while(input.length() > 0 && input[end] != '\0' && input[end] != ' ' && input[end] != '\n' && end < input.length())
 		end++;
-	if (input.substr(start, end) == "/nick" && !is_one_param(input)) ///// ----------- /nick <nickname> ------------------------
+	if (input.substr(start, end) == "/nick" && param_count(input) == 2) ///// ----------- /nick <nickname> ------------------------
 	{
-		putstr_fd(fd, "Plase enter you'r nickname\n");
-		ft_recv(fd, buffer);
-		while (check_if_aviable(buffer, _nickname))
+		if (check_if_aviable(param, _nickname) != 0)
 		{
-			if (!*buffer)
-				putstr_fd(fd, "Invalid nickname, please enter a valid one\n");
+			if (check_if_aviable(param, _nickname) == 2)
+				putstr_fd(fd, "Invalid nickname, please enter a valid one (contain only letters and numbers)\n");
 			else
 				putstr_fd(fd, "This nickname is already taken, please choose another one\n");
-			ft_recv(fd, buffer);
 		}
-		set_nickname(get_str_no_space(buffer), index);
-		putstr_fd(fd, "Your nickname has been set successfully to: ");
-		putstr_fd(fd, get_nickname(index));
-	}
-	else if (input.substr(start, end) == "/user" && !is_one_param(input)) ////// --------- /user <username> -------------------
-	{
-		putstr_fd(fd, "Plase enter you'r new username\n");
-		ft_recv(fd, buffer);
-		while (check_if_aviable(buffer, _username))
+		else
 		{
-			if (!*buffer)
-				putstr_fd(fd, "Invalid username, please enter a valid one\n");
+			set_nickname(get_str_no_space(param), index);
+			putstr_fd(fd, "Your nickname has been set successfully to: ");
+			putstr_fd(fd, get_nickname(index));
+			putstr_fd(fd, "\n");
+		}
+	}
+	else if (input.substr(start, end) == "/nick" && param_count(input) == 1) ////// --------- /nick ---------------------
+		putstr_fd(fd, get_nickname(index) + "\n");
+	else if (input.substr(start, end) == "/user" && param_count(input) == 2) ////// --------- /user <username> -------------------
+	{
+		if (check_if_aviable(param, _username) != 0)
+		{
+			if (check_if_aviable(param, _username) == 2)
+				putstr_fd(fd, "Invalid username, please enter a valid one (contain only letters and numbers)\n");
 			else
 				putstr_fd(fd, "This username is already taken, please choose another one\n");
-			ft_recv(fd, buffer);
 		}
-		set_username(buffer, index);
-		putstr_fd(fd, "Your username has been changed successfully to: ");
-		putstr_fd(fd, get_username(index));
-	}
-	else if (input.substr(start, end) == "/realname" && !is_one_param(input)) ////// --------- /realname <realname> --------------------recv need to be fixed !!
-	{
-		putstr_fd(fd, "Plase enter you'r new realname\n");
-		ft_recv(fd, buffer);
-		while (check_if_aviable(buffer, _realname))
+		else
 		{
-			if (!*buffer)
-				putstr_fd(fd, "Invalid realname, please enter a valid one\n");
-			else
-				putstr_fd(fd, "This realname is already taken, please choose another one\n");
-			ft_recv(fd, buffer);
+			set_username(get_str_no_space(param), index);
+			putstr_fd(fd, "Your username has been set successfully to: ");
+			putstr_fd(fd, get_username(index));
+			putstr_fd(fd, "\n");
 		}
-		set_realname(buffer, index);
-		putstr_fd(fd, "Your realname has been changed successfully to: ");
-		putstr_fd(fd, get_realname(index));
 	}
-	else if (input.substr(start, end) == "/quit" && !is_one_param(input)) ////// --------- /quit --------------------
+	else if (input.substr(start, end) == "/user" && param_count(input) == 1) ////// --------- /user --------------------
+		putstr_fd(fd, get_username(index) + "\n");
+	else if (input.substr(start, end) == "/realname" && param_count(input) == 2) ////// --------- /realname <realname> -------------------
+	{
+		if (check_if_aviable(param, _realname) == 2)
+			putstr_fd(fd, "Invalid realname, please enter a valid one (contain only letters and numbers)\n");
+		else
+		{
+			set_realname(get_str_no_space(param), index);
+			putstr_fd(fd, "Your realname has been set successfully to: ");
+			putstr_fd(fd, get_realname(index));
+			putstr_fd(fd, "\n");
+		}
+	}
+	else if (input.substr(start, end) == "/realname" && param_count(input) == 1) ////// --------- /realname --------------------
+		putstr_fd(fd, get_realname(index) + "\n");
+	else if (input.substr(start, end) == "/quit" && param_count(input) == 1) ////// --------- /quit --------------------
 	{
 		putstr_fd(fd, "You have been disconnected from the server successfully\n");
 		std::cout << "A client has been disconnected" << std::endl;
+		delete_client(index);
 		close(fd);
 	}
-	else if (input.substr(start, end) == "/help" && !is_one_param(input)) ////// --------- /help --------------------
+	else if (input.substr(start, end) == "/help" && param_count(input) == 1) ////// --------- /help --------------------
 		help(fd);
 	else if (input.substr(start, end) == "/connect")
 		putstr_fd(fd, "You are already connected to the server\n");
-	else if (input.substr(start, end) == "PRIVMSG") ////// --------- PRIVMSG <nickname> <message> --------------------recv need to be fixed !!
+	else if (input.substr(start, end) == "/PRIVMSG" && param_count(input) >= 3) ////// --------- PRIVMSG <nickname> <message> -------
 	{
-		putstr_fd(fd, "Please enter the nickname of the user you want to send a message to\n");
-		ft_recv(fd, buffer);
-		while (get_fd_by_nickname(buffer) == -1)
-		{
+		if (get_fd_by_nickname(param) == -1)
 			putstr_fd(fd, "This user is not exist, please enter a valid nickname\n");
-			ft_recv(fd, buffer);
+		else
+		{
+			putstr_fd(get_fd_by_nickname(param), "You have received a private message from ");
+			putstr_fd(get_fd_by_nickname(param) ,get_nickname(index) + ": \n----> ");
+			putstr_fd(get_fd_by_nickname(param), get_param(input, 3));
+			putstr_fd(fd, "You have sent a private message to ");
+			putstr_fd(fd, get_nickname(get_index_client(get_fd_by_nickname(param))));
+			putstr_fd(fd, "\n");
 		}
-		memset(buffer, 0, sizeof(buffer));
-		putstr_fd(fd, "Please enter the message you want to send\n");
-		ft_recv(fd, buffer);
-		send(get_fd_by_nickname(buffer), buffer, strlen(buffer), 0);
 	}
 	else
 		putstr_fd(fd, "Invalid command, use /help for more information\n");
@@ -249,12 +261,12 @@ int client::check_input(std::string input, int fd, Server &sev)
 	size_t end = start;
 	while(input.length() > 0 && input[end] != '\0' && input[end] != ' ' && input[end] != '\n' && end < input.length())
 		end++;
-	if (input.substr(start, end) == "/help" && !is_one_param(input))
+	if (input.substr(start, end) == "/help" && param_count(input) == 1)
 	{
 		help(fd);
 		return (1);
 	}
-	if (input.substr(start, end) == "/connect" && check_ip_port(fd , input.substr(end, input.length() - end -1), sev) == 0)
+	if (input.substr(start, end) == "/connect" && check_ip_port(fd , input.substr(end, input.length() - end -1), sev) == 0 && param_count(input) == 4)
 	{
 		send(fd, "You have been connected to the server successfully :) \n", 56, 0);
 		std::cout << "A new client is connected" << std::endl;
@@ -274,11 +286,14 @@ void	client::help(int fd)
 {
 	putstr_fd(fd, "+----------------| List of available commands: |---------------+\n");
 	putstr_fd(fd, "| /connect <address> <port> <password> - Connect to the server |\n");
-	putstr_fd(fd, "| /nick <nickname> - Set your nickname                         |\n");
-	putstr_fd(fd, "| /user <username> - Set your username                         |\n");
-	putstr_fd(fd, "| /realname <realname> - Set your realname                     |\n");
+	putstr_fd(fd, "| /PRIVMSG <nickname> <message> - Send a private message       |\n");
+	putstr_fd(fd, "| /nick <nickname> - Change your nickname                      |\n");
+	putstr_fd(fd, "| /user <username> - Change your username                      |\n");
+	putstr_fd(fd, "| /realname <realname> - Change your realname                  |\n");
+	putstr_fd(fd, "| /realname - See your realname                                |\n");
+	putstr_fd(fd, "| /user - See your username                                    |\n");
+	putstr_fd(fd, "| /nick - See your nickname                                    |\n");
 	putstr_fd(fd, "| /quit - Disconnect from the server                           |\n");
-	putstr_fd(fd, "| PRIVMSG <nickname> <message> - Send a private message        |\n");
 	putstr_fd(fd, "| /help - Display this help message                            |\n");
 	putstr_fd(fd, "+--------------------------------------------------------------+\n");
 }
@@ -291,8 +306,9 @@ void	client::delete_client(int index)
 	_realname[index] = "";
 }
 
-void	client::init_all()
+void	client::init_all(Server &sev)
 {
+	socketfile = sev.get_socketfile();
 	memset(_fd, -2, sizeof(_fd));
 	memset(_nickname, 0, sizeof(_nickname));
 	memset(_username, 0, sizeof(_username));
@@ -303,7 +319,15 @@ int		client::check_if_aviable(std::string input, std::string* list)
 {
 	size_t i = 0;
 	std::string name;
+	size_t start = skep_space(input, 0);
+	size_t end = start;
+	while(input.length() > 0 && std::isalpha(input[end]) && end < input.length())
+		end++;
+	if (input[end] != '\0' && input[end] != ' ' && input[end] != '\n')
+		return (2);
 	name = get_str_no_space(input);
+	if (name.empty())
+		return (2);
 	while (i < MAX_CLIENTS)
 	{
 		if (name == list[i] && _fd[i] > 0)

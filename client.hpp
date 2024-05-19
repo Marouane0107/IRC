@@ -20,6 +20,7 @@ class client
 		std::string _username[MAX_CLIENTS];
 		std::string _nickname[MAX_CLIENTS];
 		std::string _realname[MAX_CLIENTS];
+		int			socketfile;
         std::string _port;
         std::string _address;
 	public:
@@ -30,6 +31,7 @@ class client
 		std::string	get_nickname(int index);
         std::string	get_port();
         std::string	get_address();
+		int		get_socketfile();
 		int		get_fd(int index);
 		int		get_fd_by_nickname(std::string nickname);
 		int		get_index_client(int fd);
@@ -40,9 +42,8 @@ class client
 		void	set_username(std::string username, int index);
 		void	set_port(std::string port);
 		void	set_address(std::string address);
-	//	void	parse_cmd(int fd, Server &sev);
 		int		check_input(std::string input, int fd, Server &sev);
-		void	init_all();
+		void	init_all(Server &sev);
 		void	delete_client(int index);
 		void	help(int fd);
 		void	check_cmd(int fd, std::string input);
@@ -50,8 +51,9 @@ class client
 };
 
 std::string	get_str_no_space(std::string input);
-char*		ft_recv(int fd, char *buffer);
-int			is_one_param(std::string input);
+std::string	one_by_one(std::string input, size_t *start);
+std::string	get_param(std::string input, int param_number);
+int			param_count(std::string input);
 int			get_len_no_space(std::string input, size_t start);
 int			skep_space(std::string input, size_t start);
 void		putstr_fd(int fd, std::string str);

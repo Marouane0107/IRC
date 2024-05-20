@@ -45,7 +45,12 @@ class client
 		int		check_input(std::string input, int fd, Server &sev);
 		void	init_all(Server &sev);
 		void	delete_client(int index);
+		//-------------------------------------------------------------+ bot
+		void	help_to_connect(int fd);
+		void	welcome_message(int fd);
 		void	help(int fd);
+		void	goodbye_message(int fd);
+		//-------------------------------------------------------------+
 		void	check_cmd(int fd, std::string input);
 		int		check_if_aviable(std::string input, std::string *list);
 };

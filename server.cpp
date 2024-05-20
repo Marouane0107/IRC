@@ -50,7 +50,7 @@ void Server::BindSocket()
 {
 	struct sockaddr_in add;
 	int en = 1;
-	memset(&add, 0, sizeof(add));
+	bzero(&add, sizeof(add));
 	add.sin_family = AF_INET;
 	add.sin_port = htons(in_port);
 	add.sin_addr.s_addr = inet_addr(_address.c_str());
@@ -107,29 +107,40 @@ void Server::AcceptConnection()
 		std::cerr << "Error in epoll_ctl: " << strerror(errno) << std::endl;
 }
 
+void stripCR(std::string &str)
+{
+    str.erase(std::remove(str.begin(), str.end(), '\r'), str.end());
+}
+
 void Server::HandleEvent(int fd, Server &sev, client &user)
 {
 
 	char buff[1024];
 	memset(buff, 0, sizeof(buff));
+	//std::cout << "Received data from1: " << "|" << received_data << "|" << std::endl;
 	ssize_t bytes = recv(fd, buff, sizeof(buff) - 1, 0);
+	//std::cout << "Received data from2: " << "|" << received_data << "|" << std::endl;
 	if (bytes <= 0)
 	{
-		std::cout << "Client <" << fd << "> Disconnected" << std::endl;
+		
+		std::cout << "Client <" << fd << "> Disconnected ->" << bytes << std::endl;
 		close(fd);
 	}
 	else
 	{
-		std::cout << "Received data: " << sizeof(buff) << "      " << fd << "    "<< buff << std::endl;
+		buff[bytes] = '\0';
+		std::string received_data(buff);
+		stripCR(received_data);
+		//std::cout << "Received data: " << sizeof(buff) << "      " << fd << "    "<< received_data << std::endl;
 		if(user.get_index_client(fd)  == -1)
 		{
-			if (user.check_input(buff, fd, sev) == 1)
+			if (user.check_input(received_data, fd, sev) == 1)
 				return ;
 			else
-				memset(buff, 0, sizeof(buff));
+				bzero(buff, sizeof(buff));
 		}
 		else
-			user.check_cmd(fd, buff);
+			user.check_cmd(fd, received_data);
 	}
 	
 }

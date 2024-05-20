@@ -50,7 +50,7 @@ void	client::help(int fd)
 }
 
 void client::goodbye_message(int fd) {
-    putstr_fd(fd, "+-------------------| Goodbye from IRC |-------------------+\n");
+    putstr_fd(fd, "+-------------------| Goodbye from IRC |---------------+\n");
     putstr_fd(fd, "|                                                      |\n");
     putstr_fd(fd, "| You have disconnected from the IRC.                  |\n");
     putstr_fd(fd, "| Thank you for visiting. Have a great day!            |\n");

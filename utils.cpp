@@ -18,7 +18,11 @@ int get_len_no_space(std::string input, size_t start)
 {
 	size_t	len = 0;
 
-	while (start < input.length() && input[start] != '\0' && input[start] != '\n' && input[start] != ' ')
+	while (start < input.length() && input[start] != '\0' && input[start] != '\n' && input[start] != ' ' && input[start] != '\r')
+	{
+		len++;
+		start++;
+	}
 	{
 		if (input[start] != ' ' && input[start] != '\n')
 			len++;

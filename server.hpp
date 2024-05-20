@@ -6,6 +6,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <cstring>
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -14,6 +16,7 @@
 #include <fcntl.h>
 #include <arpa/inet.h>
 #include <sys/epoll.h>
+#include <algorithm>
 
 class client;
 

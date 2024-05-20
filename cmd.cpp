@@ -10,14 +10,18 @@ void	client::check_cmd(int fd, std::string input)
 		putstr_fd(fd, "You are not connected to the server, use /bot for more information\n");
 		return ;
 	}
-	size_t start = skep_space(input, 0);
-	size_t end = start;
+	size_t start = 0;
 	std::string param;
 	if (param_count(input) > 1)
 		param = get_param(input, 2);
+	size_t end = start;
+	if (input[start] == '/')
+		start++;
 	while(input.length() > 0 && input[end] != '\0' && input[end] != ' ' && input[end] != '\n' && end < input.length())
 		end++;
-	if (get_str_no_space(input) == "/nick" && param_count(input) == 2) ///// ----------- /nick <nickname> ------------------------
+	if (start == 0)
+		end++;
+	if ((input.substr(start, end - 1) == "nick" || input.substr(start, end - 1) == "NICK") && param_count(input) == 2) ///// ----------- /nick <nickname> ------------------------
 	{
 		if (check_if_aviable(param, _nickname) != 0)
 		{
@@ -34,9 +38,9 @@ void	client::check_cmd(int fd, std::string input)
 			putstr_fd(fd, "\n");
 		}
 	}
-	else if (get_str_no_space(input) == "/nick" && param_count(input) == 1) ////// --------- /nick ---------------------
+	else if ((input.substr(start, end - 1) == "nick" || input.substr(start, end - 1) == "NICK") && param_count(input) == 1) ////// --------- /nick ---------------------
 		putstr_fd(fd, get_nickname(index) + "\n");
-	else if (get_str_no_space(input) == "/user" && param_count(input) == 2) ////// --------- /user <username> -------------------
+	else if (input.substr(start, end - 1) == "user" && param_count(input) == 2) ////// --------- /user <username> -------------------
 	{
 		if (check_if_aviable(param, _username) != 0)
 		{
@@ -53,9 +57,9 @@ void	client::check_cmd(int fd, std::string input)
 			putstr_fd(fd, "\n");
 		}
 	}
-	else if (get_str_no_space(input) == "/user" && param_count(input) == 1) ////// --------- /user --------------------
+	else if (input.substr(start, end - 1) == "user" && param_count(input) == 1) ////// --------- /user --------------------
 		putstr_fd(fd, get_username(index) + "\n");
-	else if (get_str_no_space(input) == "/realname" && param_count(input) == 2) ////// --------- /realname <realname> -------------------
+	else if (input.substr(start, end - 1) == "realname" && param_count(input) == 2) ////// --------- /realname <realname> -------------------
 	{
 		if (check_if_aviable(param, _realname) == 2)
 			putstr_fd(fd, "IRC: Invalid realname, please enter a valid one (contain only letters and numbers)\n");
@@ -67,20 +71,20 @@ void	client::check_cmd(int fd, std::string input)
 			putstr_fd(fd, "\n");
 		}
 	}
-	else if (get_str_no_space(input) == "/realname" && param_count(input) == 1) ////// --------- /realname --------------------
+	else if (input.substr(start, end - 1) == "realname" && param_count(input) == 1) ////// --------- /realname --------------------
 		putstr_fd(fd, get_realname(index) + "\n");
-	else if (get_str_no_space(input) == "/quit" && param_count(input) == 1) ////// --------- /quit --------------------
+	else if (input.substr(start, end - 1) == "quit" && param_count(input) == 1) ////// --------- /quit --------------------
 	{
 		goodbye_message(fd);
 		std::cout << "A client has been disconnected" << std::endl;
 		delete_client(index);
 		close(fd);
 	}
-	else if (get_str_no_space(input) == "/bot" && param_count(input) == 1) ////// --------- /bot  help --------------------
+	else if (input.substr(start, end - 1) == "bot" && param_count(input) == 1) ////// --------- /bot  help --------------------
 		help(fd);
-	else if (get_str_no_space(input) == "/connect")
+	else if (input.substr(start, end - 1) == "connect")
 		putstr_fd(fd, "IRC: You are already connected to the server\n");
-	else if (get_str_no_space(input) == "/PRIVMSG" && param_count(input) >= 3) ////// --------- PRIVMSG <nickname> <message> -------
+	else if (input.substr(start, end - 1) == "PRIVMSG" && param_count(input) >= 3) ////// --------- PRIVMSG <nickname> <message> -------
 	{
 		if (get_fd_by_nickname(param) == -1)
 			putstr_fd(fd, "IRC: This user is not exist, please enter a valid nickname\n");
@@ -101,23 +105,32 @@ void	client::check_cmd(int fd, std::string input)
 int client::check_input(std::string input, int fd, Server &sev)
 {
 	// parse input and check if it is a valid command to connecte to the server-------------------------------------------------- connect
-	size_t start = skep_space(input, 0);
+	size_t start = 0;
 	size_t end = start;
+
+	if (input[start] == '/')
+		start = 1;
 	while(input.length() > 0 && input[end] != '\0' && input[end] != ' ' && input[end] != '\n' && end < input.length())
 		end++;
-    putstr_fd(fd, get_str_no_space(input) + "\n");//-----------------------------------------------------------------------------------------------------------debug
-	if (get_str_no_space(input) == "/bot" && param_count(input) == 1) /// ----------------- /bot --------------------- help message before connecting
+	if (start == 0)
+		end++;
+	if (input.substr(start, end - 1) == "bot" && param_count(input) == 1) /// ----------------- /bot --------------------- help message before connecting
 	{
 		help_to_connect(fd);
 		return (1);
 	}
-	if (get_str_no_space(input) == "/connect" && check_ip_port(fd , input.substr(end, input.length() - end -1), sev) == 0 && param_count(input) == 4)
+	if (input.substr(start, end - 1) == "connect" && check_ip_port(fd , input.substr(end, input.length() - end), sev) == 0 && param_count(input) == 4)
 	{
 		welcome_message(fd);
 		std::cout << "A new client is connected" << std::endl;
 		set_client(fd);
 		putstr_fd(fd, "IRC: Please enter a command to continue...\n");
 		return (0);
+	}
+	else if (input.substr(start, end - 1) == "exit" && param_count(input) == 1) ////// --------- /exit --------------------
+	{
+		putstr_fd(fd, "Disconnected ()\n");
+		close(fd);
 	}
 	else
 	{

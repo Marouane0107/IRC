@@ -98,6 +98,7 @@ int check_ip_port(int fd, std::string input, Server &sev)
 	std::string ip = sev.get_address();
 	std::string port = sev.get_port();
 	std::string pass = sev.get_pass();
+
 	while (end < input.length() && input[end] != '\0' && input[end] != '\n')
 	{
 		start = skep_space(input, start);
@@ -108,7 +109,7 @@ int check_ip_port(int fd, std::string input, Server &sev)
 		{
 			if(input.substr(start, ip.length()) != ip)
 			{
-				send(fd, "Invalid ip / \n", 15, 0);
+				putstr_fd(fd, "Invalid ip / \n");
 				return (1);
 			}
 		}
@@ -116,7 +117,7 @@ int check_ip_port(int fd, std::string input, Server &sev)
 		{
 			if(input.substr(start, port.length()) != port)
 			{
-				send(fd, "Invalid port / \n", 17, 0);
+				putstr_fd(fd, "Invalid port / \n");
 				return (1);
 			}
 		}
@@ -124,7 +125,7 @@ int check_ip_port(int fd, std::string input, Server &sev)
 		{
 			if (input.substr(start, pass.length()) != pass)
 			{
-				send(fd, "Invalid password / \n", 21, 0);
+				putstr_fd(fd, "Invalid password / \n");
 				return (1);
 			}
 		}
@@ -169,10 +170,10 @@ void	client::delete_client(int index)
 void	client::init_all(Server &sev)
 {
 	socketfile = sev.get_socketfile();
-	memset(_fd, -2, sizeof(_fd));
-	memset(_nickname, 0, sizeof(_nickname));
-	memset(_username, 0, sizeof(_username));
-	memset(_realname, 0, sizeof(_realname));
+	bzero(_fd, sizeof(_fd));
+	_nickname->clear();
+	_username->clear();
+	_realname->clear();
 }
 
 int		client::check_if_aviable(std::string input, std::string* list)

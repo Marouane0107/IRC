@@ -4,10 +4,9 @@
 #include "server.hpp"
 
 #include <string>
-#include <vector>
-#include <cerrno>  // For errno
-#include <cstring> // For strerror
-
+#include <iostream>
+#include <sstream>
+#include <errno.h>
 
 const int MAX_CLIENTS = 100; // Maximum number of clients
 const int MAX_BUFFER_SIZE = 1024; // Maximum size of buffer for receiving messages
@@ -42,7 +41,6 @@ class client
 		void	set_username(std::string username, int index);
 		void	set_port(std::string port);
 		void	set_address(std::string address);
-		int		check_input(std::string input, int fd, Server &sev);
 		void	init_all(Server &sev);
 		void	delete_client(int index);
 		//-------------------------------------------------------------+ bot
@@ -51,10 +49,13 @@ class client
 		void	help(int fd);
 		void	goodbye_message(int fd);
 		//-------------------------------------------------------------+
+		int		check_input(std::string input, int fd, Server &sev);
 		void	check_cmd(int fd, std::string input);
 		int		check_if_aviable(std::string input, std::string *list);
 };
 
+int check_ip_port(int fd, std::string input, Server &sev);
+std::string	ft_itos(int value);
 std::string	get_str_no_space(std::string input);
 std::string	one_by_one(std::string input, size_t *start);
 std::string	get_param(std::string input, int param_number);

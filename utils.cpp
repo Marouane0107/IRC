@@ -1,5 +1,12 @@
 #include "client.hpp"
 
+
+std::string ft_itos(int value) {
+    std::ostringstream oss;
+    oss << value;
+    return oss.str();
+}
+
 int	skep_space(std::string input, size_t start)
 {
 	while (input.length() > 0 && input[start] == ' ' && start < input.length())
@@ -11,7 +18,7 @@ int get_len_no_space(std::string input, size_t start)
 {
 	size_t	len = 0;
 
-	while (start < input.length() && input[start] != '\0')
+	while (start < input.length() && input[start] != '\0' && input[start] != '\n' && input[start] != ' ')
 	{
 		if (input[start] != ' ' && input[start] != '\n')
 			len++;
@@ -50,6 +57,8 @@ int	param_count(std::string input)
 	while (end < input.length() && input[end] != '\0' && input[end] != '\n')
 	{
 		start = skep_space(input, start);
+		if (input[start] == '\0' || input[start] == '\n')
+			return (count);
 		end = start;
 		while(input[end] != '\0' && input[end] != ' ' && input[end] != '\n' && end < input.length())
 			end++;

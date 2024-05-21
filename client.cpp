@@ -191,7 +191,7 @@ void	client::delete_client(int index)
 void	client::init_all(Server &sev)
 {
 	socketfile = sev.get_socketfile();
-	bzero(_fd, sizeof(_fd));
+	bzero(_flag, sizeof(_fd));
 	bzero(_fd, sizeof(_fd));
 	_nickname->clear();
 	_username->clear();

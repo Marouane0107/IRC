@@ -1,6 +1,8 @@
 #include "client.hpp"
 #include "server.hpp"
-
+#include "oelboukh_irc_files/channel.hpp"
+#include "oelboukh_irc_files/update.hpp"
+#include "oelboukh_irc_files/Global.hpp"
 
 void	client::check_cmd(int fd, std::string input)
 {
@@ -32,6 +34,7 @@ void	client::check_cmd(int fd, std::string input)
 		}
 		else
 		{
+			update_nick_command(get_str_no_space(param), get_nickname(index));//oelboukh
 			set_nickname(get_str_no_space(param), index);
 			putstr_fd(fd, "IRC: Your nickname has been set successfully to: ");
 			putstr_fd(fd, get_nickname(index));
@@ -51,6 +54,7 @@ void	client::check_cmd(int fd, std::string input)
 		}
 		else
 		{
+			update_user_command(get_str_no_space(param), get_username(index));//oelboukh line 2 for user name
 			set_username(get_str_no_space(param), index);
 			putstr_fd(fd, "IRC: Your username has been set successfully to: ");
 			putstr_fd(fd, get_username(index));
@@ -65,6 +69,7 @@ void	client::check_cmd(int fd, std::string input)
 			putstr_fd(fd, "IRC: Invalid realname, please enter a valid one (contain only letters and numbers)\n");
 		else
 		{
+			update_real_name_command(get_str_no_space(param), get_nickname(index));//oelboukh line 3 for real name
 			set_realname(get_str_no_space(param), index);
 			putstr_fd(fd, "IRC: Your realname has been set successfully to: ");
 			putstr_fd(fd, get_realname(index));
@@ -129,7 +134,6 @@ void	client::check_cmd(int fd, std::string input)
 	}
 	else if (get_flag(fd) > 0)
 	{
-		putstr_fd(fd, "Here\n");
 		if (input.substr(start, end - 1) == "Yes") // not working properly------------------- need to be fixed
 		{
 			putstr_fd(fd, "IRC: You have accepted to receive the file :\n");
@@ -152,9 +156,17 @@ void	client::check_cmd(int fd, std::string input)
 		}
 	}
 	else
-		putstr_fd(fd, "IRC: Invalid command, use /bot for more information\n");
+		check_other_commands(input, all_clients[index]);//oelboukh line 1
 }
-
+void copy_data_to_client_1(client_1 *user, int fd, std::string name, std::string nick)
+{
+	user->set_socket(fd);
+	user->set_name(name);
+	user->set_nick(nick);
+	user->set_admin(0);
+	all_clients.push_back(user);
+	std::cout << "New user added to the list of clients" << std::endl;
+}
 int client::check_input(std::string input, int fd, Server &sev)
 {
 	// parse input and check if it is a valid command to connecte to the server-------------------------------------------------- connect
@@ -174,9 +186,11 @@ int client::check_input(std::string input, int fd, Server &sev)
 	}
 	if (input.substr(start, end - 1) == "connect" && check_ip_port(fd , input.substr(end, input.length() - end), sev) == 0 && param_count(input) == 4)
 	{
+		client_1 *user = new client_1();
 		welcome_message(fd);
 		std::cout << "A new client is connected" << std::endl;
 		set_client(fd);
+		copy_data_to_client_1(user, fd, get_username(get_index_client(fd)), get_nickname(get_index_client(fd)));//oelboukh
 		putstr_fd(fd, "IRC: Please enter a command to continue...\n");
 		return (0);
 	}

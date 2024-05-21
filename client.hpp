@@ -21,10 +21,10 @@ class client
 		std::string _nickname[MAX_CLIENTS];
 		std::string _realname[MAX_CLIENTS];
 		std::string _save[MAX_CLIENTS];
+		int		_flag[MAX_CLIENTS];
 		int			socketfile;
         std::string _port;
         std::string _address;
-		int		_flag[MAX_CLIENTS];
 	public:
 		client();
 		~client();

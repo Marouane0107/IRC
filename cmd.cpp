@@ -13,7 +13,7 @@ void	client::check_cmd(int fd, std::string input)
 	size_t start = 0;
 	std::string param;
 	if (param_count(input) > 1)
-		param = get_param(input, 2);
+		param = get_param(input, 2, 1);
 	size_t end = start;
 	if (input[start] == '/')
 		start++;
@@ -90,12 +90,65 @@ void	client::check_cmd(int fd, std::string input)
 			putstr_fd(fd, "IRC: This user is not exist, please enter a valid nickname\n");
 		else
 		{
-			putstr_fd(get_fd_by_nickname(param), "IRC: You have received a private message from ");
-			putstr_fd(get_fd_by_nickname(param) ,get_nickname(index) + ": \n----> ");
-			putstr_fd(get_fd_by_nickname(param), get_param(input, 3));
-			putstr_fd(fd, "IRC: You have sent a private message to ");
-			putstr_fd(fd, get_nickname(get_index_client(get_fd_by_nickname(param))));
-			putstr_fd(fd, "\n");
+			if (get_fd_by_nickname(param) == fd)
+			{
+				putstr_fd(fd, "IRC: You have sent a private message to yourself\n");
+				putstr_fd(fd, "IRC: You have received a private message sent by you !!\n");
+				putstr_fd(fd, "    -->me: \n");
+				putstr_fd(fd, get_param(input, 3, 0));
+			}
+			else
+			{
+				putstr_fd(get_fd_by_nickname(param), "IRC: You have received a private message from ");
+				putstr_fd(get_fd_by_nickname(param) ,get_nickname(index) + ": \n----> ");
+				putstr_fd(get_fd_by_nickname(param), get_param(input, 3, 0));
+				putstr_fd(fd, "IRC: You have sent a private message to ");
+				putstr_fd(fd, get_nickname(get_index_client(get_fd_by_nickname(param))));
+				putstr_fd(fd, "\n");
+			}
+		}
+	}
+	else if((input.substr(start, end - 1) == "FILEMSG" && param_count(input) >= 3)) ////// --------- FILEMSG <nickname> <file> ------- need to add accept file !!
+	{
+		if (get_fd_by_nickname(param) == -1)
+			putstr_fd(fd, "IRC: This user is not exist, please enter a valid nickname\n");
+		else
+		{
+			if ((send_file(fd, get_fd_by_nickname(param), get_param(input, 3, 1)) == 0))
+			{
+				putstr_fd(fd, "IRC: You have sent a file to ");
+				putstr_fd(fd, get_nickname(get_index_client(get_fd_by_nickname(param))));
+				putstr_fd(fd, "\n");
+				putstr_fd(get_fd_by_nickname(param), "IRC: You have received a file from ");
+				putstr_fd(get_fd_by_nickname(param), get_nickname(index));
+				putstr_fd(get_fd_by_nickname(param), "\n");
+				putstr_fd(get_fd_by_nickname(param), "IRC: Please enter 'Yes' to accept the file or 'No' to refuse it\n");
+				putstr_fd(get_fd_by_nickname(param), "Ps: enything else will refuse the file\n");
+			}
+		}
+	}
+	else if (get_flag(fd) > 0)
+	{
+		putstr_fd(fd, "Here\n");
+		if (input.substr(start, end - 1) == "Yes") // not working properly------------------- need to be fixed
+		{
+			putstr_fd(fd, "IRC: You have accepted to receive the file :\n");
+			putstr_fd(fd, _save[fd]);
+			_save[fd].clear();
+			set_flag(-1, fd);
+		}
+		else if (input.substr(start, end - 1) == "No")
+		{
+			putstr_fd(fd, "IRC: You have refused to receive the file\n");
+			_save[index].clear();
+			set_flag(-1, fd);
+		}
+		else
+		{
+			putstr_fd(fd, "IRC: You have refused to receive the file\n");
+			_save[fd].clear();
+			set_flag(-1, fd);
+			putstr_fd(fd, "IRC: Invalid command, use /bot for more information\n");
 		}
 	}
 	else
@@ -139,3 +192,38 @@ int client::check_input(std::string input, int fd, Server &sev)
 	}
 	return (0);
 }
+
+
+int	client::send_file(int fd, int fd_recv, std::string file)
+{
+    std::ifstream ifs(file.c_str());
+    std::string content;
+
+	if (!ifs)
+	{
+		putstr_fd(fd, "IRC: Error opening file\n");
+		return (1);
+	}
+    std::string line;
+    while (std::getline(ifs, line))
+    {
+        content += line;
+        content += '\n';
+    }
+	ifs.close();
+	if (content.empty())
+	{
+		putstr_fd(fd, "IRC: The file is empty\n");
+		return (1);
+	}
+	if (fd == fd_recv)
+	{
+		putstr_fd(fd, "IRC: You have received a file contnet sent by you !!\n");
+		putstr_fd(fd_recv, content);
+		return (2);
+	}
+	set_save(content, fd_recv);
+	set_flag(fd, fd_recv);
+    return (0);
+}
+

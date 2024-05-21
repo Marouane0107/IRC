@@ -28,6 +28,7 @@ void    help(int fd)
 	putstr_fd(fd, "|           List of Available Commands:                        |\n");
 	putstr_fd(fd, "| /connect <address> <port> <password> - Connect to the server |\n");
 	putstr_fd(fd, "| /PRIVMSG <nickname> <message> - Send a private message       |\n");
+	putstr_fd(fd, "| /FILEMSG <nickname> <file> - Send a file to a user           |\n");
 	putstr_fd(fd, "| /nick <nickname> - Change your nickname                      |\n");
 	putstr_fd(fd, "| /user <username> - Change your username                      |\n");
 	putstr_fd(fd, "| /realname <realname> - Change your real name                 |\n");

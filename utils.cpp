@@ -72,7 +72,7 @@ int	param_count(std::string input)
 	return (count);
 }
 
-std::string	get_param(std::string input, int param_number)
+std::string	get_param(std::string input, int param_number, int f)
 {
 	int i = 1;
 	size_t start = 0;
@@ -84,14 +84,14 @@ std::string	get_param(std::string input, int param_number)
 		end = start;
 		while(input[end] != '\0' && input[end] != ' ' && input[end] != '\n' && end < input.length())
 			end++;
-		if (i == param_number && param_number == 3)
+		if (i == param_number && f == 0)
 		{
 			end = start;
 			while (input[end] != '\0' && end < input.length())
 				end++;
 			return (input.substr(start, end - start));
 		}
-		if (i == param_number)
+		if (i == param_number && f == 1)
 			return (input.substr(start, end - start));
 		start = end;
 		i++;

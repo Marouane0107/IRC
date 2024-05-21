@@ -19,18 +19,6 @@ void list_command(int fd, channel *ch)
             send(fd, message.c_str(), message.size(), 0);
 }
 
-void keep_recv(clien_info *cl, char *name){
-	while(true){
-        memset(cl->cmd, 0, 1024);
-        recv(cl->socket, cl->cmd, 1024, 0);
-        if(strlen(cl->cmd) > 0){
-            std::cout << cl->cmd << std::endl;
-            name = cl->cmd;
-            break;
-        }
-	}
-}
-
 std::vector<std::string> split(const std::string& str, char delimiter){
     std::vector<std::string> tokens;
     std::istringstream iss(str);

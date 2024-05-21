@@ -181,6 +181,8 @@ int client::get_fd_by_nickname(std::string nickname)
 
 void	client::delete_client(int index)
 {
+	if(index == -1)
+		return ;
 	_fd[index] = -1;
 	_nickname[index].clear();
 	_username[index].clear();

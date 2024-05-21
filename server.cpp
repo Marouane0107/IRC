@@ -117,12 +117,12 @@ void Server::HandleEvent(int fd, Server &sev, client &user)
 
 	char buff[1024];
 	memset(buff, 0, sizeof(buff));
-	//std::cout << "Received data from1: " << "|" << received_data << "|" << std::endl;
+	//std::cout << "Received data from1: " << "|" << buff << "|" << std::endl;
 	ssize_t bytes = recv(fd, buff, sizeof(buff) - 1, 0);
-	//std::cout << "Received data from2: " << "|" << received_data << "|" << std::endl;
+	//std::cout << "Received data from2: " << "|" << buff << "|" << std::endl;
 	if (bytes <= 0)
 	{
-		
+		user.delete_client(user.get_index_client(fd));
 		std::cout << "Client <" << fd << "> Disconnected ->" << bytes << std::endl;
 		close(fd);
 	}

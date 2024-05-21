@@ -62,7 +62,7 @@ void check_other_commands(std::string input, client_1 *user)
 {
     std::vector<std::string> tokens;
     tokens = split(input, ' ');
-    if(tokens[0] == "/join" || tokens[0] == "/join\n" || tokens[0] == "join")
+    if(tokens[0] == "/join" || tokens[0] == "/join\n" || tokens[0] == "join" || tokens[0] == "/JOIN" || tokens[0] == "JOIN")
     {
         // if(tokens[0] == "/join\n"){
         //     std::string msg = "Please enter the channel name after the command >/join #channel_name\n";

@@ -73,8 +73,19 @@ void tmp_print_vecttor(std::vector<std::string> tokens){
         std::cout << tokens[i] << std::endl;
     }
 }
+
+void remove_user_from_all_channels(client_1 *user){
+    for(size_t i = 0; i < all_channels.size(); i++){
+        std::vector<client_1*>::iterator it;
+        it = std::find(all_channels[i]->_clients.begin(), all_channels[i]->_clients.end(), user);
+        if(it != all_channels[i]->_clients.end()){
+            all_channels[i]->_clients.erase(it);
+        }
+    }  
+}
 void join_command(std::vector<std::string> tokens, client_1 *user)
 {
+    
     if(tokens.size() < 2 || tokens.size() > 3){
         std::string msg = "wrong number of arguments or invalid\n";
         send(user->get_socket(), msg.c_str(), msg.size(), 0);
@@ -99,6 +110,7 @@ void join_command(std::vector<std::string> tokens, client_1 *user)
         ch = new channel(channel_name);
         user->set_admin(1);
         user->set_super_admin(1);
+        remove_user_from_all_channels(user);
         ch->add_admin(user);
         ch->add_client(user);
         all_channels.push_back(ch);

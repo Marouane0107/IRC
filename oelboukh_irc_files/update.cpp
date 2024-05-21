@@ -137,7 +137,7 @@ void check_other_commands(std::string input, client_1 *user)
     }
     else if(user->ptr_channel){//it is a message
         std::string input1 = user->get_name() + ": " + input;
-        // broadcast_message(user->ptr_channel, user, input1);
+        broadcast_message(user->ptr_channel, user, input1);
     }
     else{
         std::string msg = "Invalid command\n";

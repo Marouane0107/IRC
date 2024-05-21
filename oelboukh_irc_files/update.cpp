@@ -62,13 +62,13 @@ void check_other_commands(std::string input, client_1 *user)
 {
     std::vector<std::string> tokens;
     tokens = split(input, ' ');
-    if(tokens[0] == "/join" || tokens[0] == "/join\n")
+    if(tokens[0] == "/join" || tokens[0] == "/join\n" || tokens[0] == "join")
     {
-        if(tokens[0] == "/join\n"){
-            std::string msg = "Please enter the channel name after the command >/join #channel_name\n";
-            send(user->get_socket(), msg.c_str(), msg.size(), 0);
-            return;
-        }
+        // if(tokens[0] == "/join\n"){
+        //     std::string msg = "Please enter the channel name after the command >/join #channel_name\n";
+        //     send(user->get_socket(), msg.c_str(), msg.size(), 0);
+        //     return;
+        // }
         join_command(tokens, user);
     }
     else if(tokens[0] == "/list\n")//if tokens[0] == "/list" list all the users in the channel manually

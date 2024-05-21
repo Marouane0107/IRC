@@ -43,17 +43,19 @@ class client
 		void	set_address(std::string address);
 		void	init_all(Server &sev);
 		void	delete_client(int index);
-		//-------------------------------------------------------------+ bot
-		void	help_to_connect(int fd);
-		void	welcome_message(int fd);
-		void	help(int fd);
-		void	goodbye_message(int fd);
-		//-------------------------------------------------------------+
 		int		check_input(std::string input, int fd, Server &sev);
 		void	check_cmd(int fd, std::string input);
 		int		check_if_aviable(std::string input, std::string *list);
 };
 
+		//-------------------------------------------------------------+ bot
+		void	help_to_connect(int fd);
+		void	welcome_message(int fd);
+		void    welcome_user_channel(int fd, std::string channel);
+		void    goodbye_user_channel(int fd, std::string channel);
+		void	help(int fd);
+		void	goodbye_message(int fd);
+		//-------------------------------------------------------------+
 int check_ip_port(int fd, std::string input, Server &sev);
 std::string	ft_itos(int value);
 std::string	get_str_no_space(std::string input);

@@ -80,6 +80,7 @@ client_1::client_1(){
 	this->real_name = "";
 	this->is_admin = 0;
 	this->super_admin = 0;
+	this->ptr_channel = NULL;
 }
 
 void channel::set_topic_changeable(int topic_changeable){

@@ -141,6 +141,6 @@ void check_other_commands(std::string input, client_1 *user)
     }
     else{
         std::string msg = "Invalid command\n";
-        send(user->get_socket(), msg.c_str(), msg.size(), 0);
+        write(user->get_socket(), msg.c_str(), msg.size());
     }
 }

@@ -3,7 +3,6 @@
 #include "oelboukh_irc_files/channel.hpp"
 #include "oelboukh_irc_files/update.hpp"
 #include "oelboukh_irc_files/Global.hpp"
-
 void	client::check_cmd(int fd, std::string input)
 {
 	int index = get_index_client(fd);
@@ -187,6 +186,7 @@ int client::check_input(std::string input, int fd, Server &sev)
 	if (input.substr(start, end - 1) == "connect" && check_ip_port(fd , input.substr(end, input.length() - end), sev) == 0 && param_count(input) == 4)
 	{
 		client_1 *user = new client_1();
+		lst_add_back(user);
 		welcome_message(fd);
 		std::cout << "A new client is connected" << std::endl;
 		set_client(fd);

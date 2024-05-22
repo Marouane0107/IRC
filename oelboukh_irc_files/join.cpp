@@ -1,5 +1,6 @@
 #include "channel.hpp"
 #include "../server.hpp"
+#include "Global.hpp"
 #include "join.hpp"
 #include <iostream>
 #include <sstream>
@@ -96,6 +97,7 @@ void join_command(std::vector<std::string> tokens, client_1 *user)
             return;
         }
         ch = new channel(channel_name);
+        lst_add_back(ch);
         user->set_admin(1);
         user->set_super_admin(1);
         remove_user_from_all_channels(user);

@@ -164,7 +164,7 @@ void copy_data_to_client_1(client_1 *user, int fd, std::string name, std::string
 	user->set_nick(nick);
 	user->set_admin(0);
 	all_clients.push_back(user);
-	std::cout << "New user added to the list of clients" << std::endl;
+	std::cout << "New user added to the list of clients" << std::endl; //---------------------> oelboukh need to be removed
 }
 int client::check_input(std::string input, int fd, Server &sev)
 {

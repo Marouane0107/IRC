@@ -127,8 +127,8 @@ void Server::HandleEvent(int fd, Server &sev, client &user)
 		check_invalid_char(read_cmd);
 		if(read_cmd.size() > 1023)
 		{
-			std::cout << "You are using the free version, You can upgrade it to the premuim version < only 999,999.99$ >" << std::endl;
-			std::cout << "For more information contact us: maouzal@student.1337.ma" << std::endl;
+			std::cout << "IRC: You are using the free version, You can upgrade it to the premuim version < limited offer only, 999.99$ >" << std::endl;
+			std::cout << "IRC: For more information contact : marouaneaouza@gmail.com" << std::endl;
 			return ;
 		}
 		if(user.get_index_client(fd)  == -1)

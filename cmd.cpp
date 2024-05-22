@@ -127,7 +127,7 @@ void	client::check_cmd(int fd, std::string input)
 				putstr_fd(get_fd_by_nickname(param), get_nickname(index));
 				putstr_fd(get_fd_by_nickname(param), "\n");
 				putstr_fd(get_fd_by_nickname(param), "IRC: Please enter 'Yes' to accept the file or 'No' to refuse it\n");
-				putstr_fd(get_fd_by_nickname(param), "Ps: enything else will refuse the file\n");
+				putstr_fd(get_fd_by_nickname(param), "IRC: Ps --> every other input will be considered as a refusal\n");
 			}
 		}
 	}
@@ -164,7 +164,7 @@ void copy_data_to_client_1(client_1 *user, int fd, std::string name, std::string
 	user->set_nick(nick);
 	user->set_admin(0);
 	all_clients.push_back(user);
-	std::cout << "New user added to the list of clients" << std::endl;
+	std::cout << "New user added to the list of clients" << std::endl; //---------------------> oelboukh need to be removed
 }
 int client::check_input(std::string input, int fd, Server &sev)
 {
@@ -178,7 +178,7 @@ int client::check_input(std::string input, int fd, Server &sev)
 		end++;
 	if (start == 0)
 		end++;
-	if (input.substr(start, end - 1) == "bot" && param_count(input) == 1) /// ----------------- /bot --------------------- help message before connecting
+	if (input.substr(start, end - 1) == "bot" && param_count(input) == 1) /// ----------------- /bot -----------------> help message before connecting
 	{
 		help_to_connect(fd);
 		return (1);
@@ -194,14 +194,15 @@ int client::check_input(std::string input, int fd, Server &sev)
 		putstr_fd(fd, "IRC: Please enter a command to continue...\n");
 		return (0);
 	}
-	else if (input.substr(start, end - 1) == "exit" && param_count(input) == 1) ////// --------- /exit --------------------
+	else if (input.substr(start, end - 1) == "exit" && param_count(input) == 1) ////// --------- /exit 
 	{
-		putstr_fd(fd, "Disconnected ()\n");
+		putstr_fd(fd, "IRC: You have exited the server\n");
 		close(fd);
 	}
 	else
 	{
-		putstr_fd(fd, "IRC: Connect to the server first, use /bot for more information \n");
+		putstr_fd(fd, "IRC: You are not connected to the server.\n");
+        putstr_fd(fd, "IRC: Please connect to the server first. Use /bot for more information.\n");
 		return (1);
 	}
 	return (0);

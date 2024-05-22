@@ -3,6 +3,7 @@
 #include "oelboukh_irc_files/channel.hpp"
 #include "oelboukh_irc_files/update.hpp"
 #include "oelboukh_irc_files/Global.hpp"
+
 void	client::check_cmd(int fd, std::string input)
 {
 	int index = get_index_client(fd);

@@ -101,7 +101,7 @@ void check_other_commands(std::string input, client_1 *user)
 			}
 		}
 	}
-	 else if(tokens[0] == "/kick\n" || tokens[0] == "/kick" || tokens[0] == "kick" || tokens[0] == "KICK" || tokens[0] == "/KICK")
+	 else if(tokens[0] == "/kick\n" || tokens[0] == "/kick" || tokens[0] == "kick" || tokens[0] == "THROW" || tokens[0] == "/KICK")
 	 {
 		if(tokens.size() == 3)
 			KICK_command(user, user->_channels, tokens);
@@ -124,7 +124,7 @@ void check_other_commands(std::string input, client_1 *user)
 			topic_cmd(tokens, user);
 		}
 	}
-	else if(tokens[0] ==  "/invite\n" || tokens[0] == "/invite" || tokens[0] == "invite" || tokens[0] == "INVITE"){
+	else if(tokens[0] ==  "/invite\n" || tokens[0] == "/invite" || tokens[0] == "invite" || tokens[0] == "INVITE" || tokens[0] == "/INVITE"){
 		if(user->_channels.size() == 0)
 		{
 			std::string msg = "You are not in a channel yet, try to creat one >/join #channel_name\n";
@@ -139,7 +139,7 @@ void check_other_commands(std::string input, client_1 *user)
 			invite_cmd(tokens, user);
 		}
 	}
-		else if(tokens[0] == "/mode" || tokens[0] == "/mode\n"){
+		else if(tokens[0] == "/mode" || tokens[0] == "/mode\n" || tokens[0] == "/MODE" || tokens[0] == "MODE"){
 		if(user->_channels.size() == 0){
 			std::string msg = "You are not in a channel yet, try to creat one >/join #channel_name\n";
 			send(user->get_socket(), msg.c_str(), msg.size(), 0);
@@ -156,7 +156,7 @@ void check_other_commands(std::string input, client_1 *user)
 	else if(tokens[0] == "/leave" || tokens[0] == "/leave\n" || tokens[0] == "leave" || tokens[0] == "LEAVE"){
 		leave_channel(tokens, user);
 	}
-	else if(tokens[0] == "/msg" || tokens[0] == "msg" || tokens[0] == "MSG" || tokens[0] == "/MSG")//try to send message to a channel
+	else if(tokens[0] == "/chmsg" || tokens[0] == "chmsg" || tokens[0] == "CHMSG" || tokens[0] == "/CHMSG")//try to send message to a channel
 	{
 		sending_msg(tokens, user);
 	}

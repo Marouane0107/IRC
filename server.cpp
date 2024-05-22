@@ -1,11 +1,6 @@
 #include "server.hpp"
 #include "client.hpp"
 
-void    Server::set_cout(int _cout)
-{
-	cout = _cout;
-}
-
 std::string const Server::get_port() const
 {
 	return (this->_port);
@@ -35,6 +30,11 @@ Server::Server(std::string port, std::string pass)
 	in_port = atoi(_port.c_str());
 }
 
+void check_invalid_char(std::string &str)
+{
+    str.erase(std::remove(str.begin(), str.end(), '\r'), str.end());
+}
+
 void Server::CreateSock()
 {
 	socketfile = socket(AF_INET, SOCK_STREAM, 0);
@@ -57,19 +57,19 @@ void Server::BindSocket()
 	if (setsockopt(socketfile, SOL_SOCKET, SO_REUSEADDR, &en, sizeof(en)) == -1)
 	{
 		std::cerr << "Error in setsockopt: " << strerror(errno) << std::endl;
-		exit(-1);
+		exit(1);
 	}
 
 	if (fcntl(socketfile, F_SETFL, O_NONBLOCK) == -1)
 	{
 		std::cerr << "Error in fcntl: " << strerror(errno) << std::endl;
-		exit(-2);
+		exit(1);
 	}
 
 	if (bind(socketfile, (struct sockaddr*)&add, sizeof(add)) == -1)
 	{
 		std::cerr << "Error in bind: " << strerror(errno) << std::endl;
-		exit(2);
+		exit(1);
 	}
 	std::cout << "Socket bound successfully" << std::endl;
 }
@@ -79,7 +79,7 @@ void Server::ListenSocket()
 	if (listen(socketfile, SOMAXCONN) == -1)
 	{
 		std::cerr << "Error in listen: " << strerror(errno) << std::endl;
-		exit(3);
+		exit(1);
 	}
 	std::cout << "Listening on socket" << std::endl;
 }
@@ -107,40 +107,39 @@ void Server::AcceptConnection()
 		std::cerr << "Error in epoll_ctl: " << strerror(errno) << std::endl;
 }
 
-void stripCR(std::string &str)
-{
-    str.erase(std::remove(str.begin(), str.end(), '\r'), str.end());
-}
 
 void Server::HandleEvent(int fd, Server &sev, client &user)
 {
 
 	char buff[1024];
 	memset(buff, 0, sizeof(buff));
-	//std::cout << "Received data from1: " << "|" << buff << "|" << std::endl;
 	ssize_t bytes = recv(fd, buff, sizeof(buff) - 1, 0);
-	//std::cout << "Received data from2: " << "|" << buff << "|" << std::endl;
 	if (bytes <= 0)
 	{
 		user.delete_client(user.get_index_client(fd));
-		std::cout << "Client <" << fd << "> Disconnected ->" << bytes << std::endl;
+		std::cout << "Client <" << fd << "> Disconnected" << std::endl;
 		close(fd);
 	}
 	else
 	{
 		buff[bytes] = '\0';
-		std::string received_data(buff);
-		stripCR(received_data);
-		//std::cout << "Received data: " << sizeof(buff) << "      " << fd << "    "<< received_data << std::endl;
+		std::string read_cmd(buff);
+		check_invalid_char(read_cmd);
+		if(read_cmd.size() > 1023)
+		{
+			std::cout << "You are using the free version, You can upgrade it to the premuim version < only 999,999.99$ >" << std::endl;
+			std::cout << "For more information contact us: maouzal@student.1337.ma" << std::endl;
+			return ;
+		}
 		if(user.get_index_client(fd)  == -1)
 		{
-			if (user.check_input(received_data, fd, sev) == 1)
+			if (user.check_input(read_cmd, fd, sev) == 1)
 				return ;
 			else
 				bzero(buff, sizeof(buff));
 		}
 		else
-			user.check_cmd(fd, received_data);
+			user.check_cmd(fd, read_cmd);
 	}
 	
 }
@@ -152,14 +151,14 @@ void Server::InitServer(Server &sev)
 	ListenSocket();
 	
 	client user;
-	user.init_all(sev); /// intialize all parameters to 0
+	user.init_all(sev);
 
 
 	epoll_fd = epoll_create1(0);
 	if (epoll_fd == -1)
 	{
 		std::cerr << "Error in epoll_create1: " << strerror(errno) << std::endl;
-		exit(4);
+		exit(1);
 	}
 	std::cout << "Epoll created" << std::endl;
 
@@ -169,17 +168,17 @@ void Server::InitServer(Server &sev)
 	if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, socketfile, &event) == -1)
 	{
 		std::cerr << "Error in epoll_ctl: " << strerror(errno) << std::endl;
-		exit(5);
+		exit(1);
 	}
 
-	while (1)
+	while (true)
 	{
 		epoll_event events[10];
 		int num_events = epoll_wait(epoll_fd, events, 10, -1);
 		if (num_events == -1)
 		{
 			std::cerr << "Error in epoll_wait: " << strerror(errno) << std::endl;
-			exit(6);
+			exit(1);
 		}
 
 		for (int i = 0; i < num_events; ++i)

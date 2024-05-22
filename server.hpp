@@ -5,6 +5,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <csignal> 
 #include <string>
 #include <sstream>
 #include <cstring>
@@ -30,9 +31,7 @@ class Server
 		int acceptsocket;
 		int epoll_fd;
 		int in_port;
-		int cout;
 	public:
-		void    set_cout(int _cout);
 		int    get_socketfile() const;
 		std::string const get_port() const;
 		std::string const get_address() const;
@@ -46,4 +45,4 @@ class Server
 		void HandleEvent(int fd, Server &sev, client &user);
 };
 
-#endif // SERVER_HPP
+#endif

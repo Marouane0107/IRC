@@ -118,27 +118,29 @@ int check_ip_port(int fd, std::string input, Server &sev)
 	{
 		start = skep_space(input, start);
 		end = start;
+		if (input[start] == '\0' || input[start] == '\n')
+			break;
 		while(input[end] != '\0' && input[end] != ' ' && input[end] != '\n' && end < input.length())
 			end++;
 		if (i == 0)
 		{
-			if(input.substr(start, ip.length()) != ip)
+			if(get_param(input, 1, 1) != ip)
 			{
 				putstr_fd(fd, "Invalid ip / \n");
 				return (1);
 			}
 		}
-		if (i == 1)
+		else if (i == 1)
 		{
-			if(input.substr(start, port.length()) != port)
+			if(get_param(input, 2, 1) != port)
 			{
 				putstr_fd(fd, "Invalid port / \n");
 				return (1);
 			}
 		}
-		if (i == 2)
+		else if (i == 2)
 		{
-			if (input.substr(start, pass.length()) != pass)
+			if (get_param(input, 3, 1) != pass)
 			{
 				putstr_fd(fd, "Invalid password / \n");
 				return (1);
@@ -147,6 +149,7 @@ int check_ip_port(int fd, std::string input, Server &sev)
 		start = end;
 		i++;
 	}
+	std::cout << "i" << i << std::endl;
 	start = skep_space(input, start);
 	if (i != 3 && start < input.length())
 		return (1);

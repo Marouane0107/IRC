@@ -44,7 +44,8 @@ class client_1
         void set_super_admin(int super_admin);
         int get_super_admin();
         std::string get_real_name();
-        channel *ptr_channel;
+        // channel *ptr_channel;
+        std::vector<channel*> _channels;// the user may be in more than one channel
     private:
         int _socket;
         int is_admin;//1 for admin, 0 for znormal user 2 for mini admin
@@ -82,7 +83,7 @@ class channel
         int get_is_max_clients_required();
         size_t get_number_of_clients();
         void set_is_max_clients_required(int is_max_clients_required);
-        void set_number_of_clients(int number_of_clients);
+        void set_number_of_clients(size_t number_of_clients);
     private:
         int is_max_clients_required;//0 for no, 1 for yes
         int number_of_clients; 
@@ -109,12 +110,13 @@ class channel
 #define WELCOME_CHANNEL "\n[NEW USER JOINED THE CHANNEL :]\n"
 ////////////////////////////////////////////////////////////
 void collect_data_from_user(clien_info *cl);
-void topic_cmd(std::vector<std::string> tokens, client_1 *user, channel *ch);
+void topic_cmd(std::vector<std::string> tokens, client_1 *user);
 void check_other_commands(std::string input, client_1 *user);
-void invite_cmd(std::vector<std::string> tokens, client_1 *user, channel *ch);
+void invite_cmd(std::vector<std::string> tokens, client_1 *user);
 void remove_char(std::string &str, char ch);
 void update_user_command(std::string new_user, std::string old_user);
-void list_command(int fd, channel *ch);
+void sending_msg(std::vector<std::string> tokens, client_1 *user);
+void list_command(int fd);
 std::vector<std::string> split(const std::string& str, char delimiter);
 #endif
 

@@ -25,7 +25,7 @@ int channel::check_if_admin(client_1 *cl){
 	return 0;
 }
 
-void channel::add_admine_by_name(std::string name){
+void channel::add_admine_by_name(std::string name){/// this function is for chose an admin
 	std::vector<client_1*>::iterator it;
 	//check if the client is an admin
 	for(it = _clients.begin(); it != _clients.end(); it++){
@@ -80,7 +80,7 @@ client_1::client_1(){
 	this->real_name = "";
 	this->is_admin = 0;
 	this->super_admin = 0;
-	this->ptr_channel = NULL;
+	// this->ptr_channel = NULL; may remove it
 }
 
 void channel::set_topic_changeable(int topic_changeable){
@@ -216,9 +216,19 @@ void channel::set_is_max_clients_required(int is_max_clients_required){
 	this->is_max_clients_required = is_max_clients_required;
 }
 
-void channel::set_number_of_clients(int number_of_clients){
+void channel::set_number_of_clients(size_t number_of_clients){
 	std::cout << "Number of clients set to: " << number_of_clients << std::endl;
-	this->number_of_clients = number_of_clients;
+	if(number_of_clients <= 0){
+		std::cout << "Number of clients must be greater than 0" << std::endl;
+	}
+	else if (number_of_clients > 10){
+		std::cout << "Number of clients must be less than 10" << std::endl;
+	}
+	else if(number_of_clients < this->_clients.size()){
+		std::cout << "Number of clients must be less than the number of clients in the channel" << std::endl;
+	}
+	else
+		this->number_of_clients = number_of_clients;
 }
 
 size_t channel::get_number_of_clients(){

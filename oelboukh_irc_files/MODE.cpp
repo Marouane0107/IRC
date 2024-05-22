@@ -1,19 +1,20 @@
 #include "../server.hpp"
 #include "MODE.hpp"
 #include "channel.hpp"
+#include "join.hpp"
 #include <iostream>
 #include "Global.hpp"
 void channel::add_admin(client_1 *cl)
 {
     cl->set_admin(1);
     _admins.push_back(cl);
-    std::cout << "Admin added to channel" << std::endl;
+    send(cl->get_socket(), "You are now an admin\n", strlen("You are now an admin\n"), 0);
 }
 
 void channel::remove_admin(client_1 *cl)
 {
     cl->set_admin(0);
-    std::cout << "Admin removed from channel" << std::endl;
+    send(cl->get_socket(), "You are no longer an admin\n", strlen("You are no longer an admin\n"), 0);
 }
 
 void channel::set_topic(std::vector<std::string> topic)
@@ -86,58 +87,68 @@ int channel::get_si_password_required()
     return si_password_required;
 }
 
-int mini_check(std::vector<std::string> option, client_1 *user){
-    if(option.size() <= 1){
-        send(user->get_socket(), "Not enough options provided\n", strlen("Not enough options provided\n"), 0);
-        return 0;
-    }
-    else if(option.size() > 2){
-        send(user->get_socket(), "Too many options provided\n", strlen("Too many options provided\n"), 0);
-        return 0;
-    }
-    return 2;
-}
-
-void MODE_command(std::vector<std::string> option, client_1 *user, channel *ch)
+// int mini_check(std::vector<std::string> option, client_1 *user){
+//     if(option.size() <= 1){
+//         send(user->get_socket(), "Not enough options provided\n", strlen("Not enough options provided\n"), 0);
+//         return 0;
+//     }
+//     else if(option.size() > 2){
+//         send(user->get_socket(), "Too many options provided\n", strlen("Too many options provided\n"), 0);
+//         return 0;
+//     }
+//     return 2;
+// }
+// /MODE #channel_mode +i 
+// /MODE #channel_mode -i
+int search_for_user_in_channel(channel *ch, client_1 *cl)
 {
-    if(option[1] != "+k" && option[1] != "-k" && option[1] != "+l" && option[1] != "-l" && option[1] != "+o" && option[1] != "-o"){
-        if(mini_check(option, user) == 0){
-            std::cout << "mini check failed\n";
-            return;
-    }
-    }
-    //invete only  public channel
-    if(option[1] == "-i\n"){//remove invete only
-        if(ch->check_if_admin(user) == 0){
-            send(user->get_socket(), "You are not an admin\n", strlen("You are not an admin\n"), 0);
-            return;
-        }
-        else{
-            ch->set_channel_mode(1);//set to public channel
+    for(size_t i = 0; i < ch->_clients.size(); i++){
+        if(ch->_clients[i] == cl){
+            return 1;
         }
     }
-    else if(option[1] == "+i\n"){//set invet only
-        if(ch->check_if_admin(user) == 0){
-            send(user->get_socket(), "You are not an admin\n", strlen("You are not an admin\n"), 0);
-            return;
-        }
-        else{
-            ch->set_channel_mode(0);//set to private channel
-        }
+    return 0;
+}
+void MODE_command(std::vector<std::string> option, client_1 *user)
+{
+    // if(option[1] != "+k" && option[1] != "-k" && option[1] != "+l" && option[1] != "-l" && option[1] != "+o" && option[1] != "-o"){
+    //     if(mini_check(option, user) == 0){
+    //         std::cout << "mini check failed\n";
+    //         return;
+    // }
+    // }
+   
+    //handel /mode #channel +i
+    std::string name = option[1];
+    remove_char(name, '\n');
+    channel *ch = search_for_channel(name);
+    if(ch == NULL){
+        send(user->get_socket(), "Channel not found\n", strlen("Channel not found\n"), 0);
+        return;
     }
-    //topic changeable
-    else if(option[1] == "+t\n")//anyone can change the topic 1 for yes
-    {
+    if(check_if_user_in_channel(user, ch) == 0){
+        send(user->get_socket(), "You are not in the channel\n", strlen("You are not in the channel\n"), 0);
+        return;
+    }
+    if(option[2] == "+i\n"){//invite only mode to channel
         if(ch->check_if_admin(user) == 0){
             send(user->get_socket(), "You are not allowed\n", strlen("You are not allowed\n"), 0);
             return;
         }
         else{
-            ch->set_topic_changeable(1);
+            ch->set_channel_mode(0);
         }
     }
-    else if(option[1] == "-t\n")//only admin can change the topic 0 for no 
-    {
+    else if(option[2] == "-i\n"){
+        if(ch->check_if_admin(user) == 0){
+            send(user->get_socket(), "You are not allowed\n", strlen("You are not allowed\n"), 0);
+            return;
+        }
+        else{
+            ch->set_channel_mode(1);
+        }
+    }
+    else if(option[2] == "-t\n"){
         if(ch->check_if_admin(user) == 0){
             send(user->get_socket(), "You are not allowed\n", strlen("You are not allowed\n"), 0);
             return;
@@ -146,9 +157,28 @@ void MODE_command(std::vector<std::string> option, client_1 *user, channel *ch)
             ch->set_topic_changeable(0);
         }
     }
-    //password required
-
-    else if(option[1] == "-k\n"){
+    else if(option[2] == "+t\n"){
+        if(ch->check_if_admin(user) == 0){
+            send(user->get_socket(), "You are not allowed\n", strlen("You are not allowed\n"), 0);
+            return;
+        }
+    else{
+        ch->set_topic_changeable(1);
+    }
+    }
+    else if(option[2] == "+k"){
+        if(ch->check_if_admin(user) == 0){
+            send(user->get_socket(), "You are not allowed\n", strlen("You are not allowed\n"), 0);
+            return;
+        }
+        else{
+            ch->set_si_password_required(1);// you can join with password
+            ch->set_password(option[3]);
+            send(user->get_socket(), "Password set\n", strlen("Password set\n"), 0);
+            send(user->get_socket(), ch->get_password().c_str(), ch->get_password().size(), 0);
+        }
+    }
+    else if(option[2] == "-k\n"){
         if(ch->check_if_admin(user) == 0){
             send(user->get_socket(), "You are not allowed\n", strlen("You are not allowed\n"), 0);
             return;
@@ -157,65 +187,70 @@ void MODE_command(std::vector<std::string> option, client_1 *user, channel *ch)
             ch->set_si_password_required(0);// you can join without password
         }
     }
-    
-    else if(option[1] == "+k"){
-        send(user->get_socket(), "seting password\n", strlen("seting password\n"), 0);
-        if(ch->check_if_admin(user) == 0){
-            send(user->get_socket(), "You are not allowed\n", strlen("You are not allowed\n"), 0);
+    else if(option[2] == "+o"){
+        std::string name = option[3];
+        remove_char(name, '\n');
+        client_1 *cl = search_for_client(name);
+        if(cl == NULL){
+            send(user->get_socket(), "User not found\n", strlen("User not found\n"), 0);
+            return;
+        }//check if user is in the channel
+        if(search_for_user_in_channel(ch, cl) == 0){
+            send(user->get_socket(), "User is not in the channel\n", strlen("User is not in the channel\n"), 0);
             return;
         }
-        else{
-            ch->set_si_password_required(1);// you can join with password
-            ch->set_password(option[2]);
-            send(user->get_socket(), "Password set\n", strlen("Password set\n"), 0);
-            send(user->get_socket(), ch->get_password().c_str(), ch->get_password().size(), 0);;
-        }
-    }
-
-    else if(option[1] == "+o"){
-        if(ch->check_if_admin(user) == 0){
-            send(user->get_socket(), "You are not allowed\n", strlen("You are not allowed\n"), 0);
+        if(ch->check_if_admin(cl) == 1){
+            send(user->get_socket(), "User is already an admin\n", strlen("User is already an admin\n"), 0);
             return;
         }
-        else{
-            remove_char(option[2], '\n');
-            ch->add_admine_by_name(option[2]);
-        }
+        ch->add_admin(cl);
+        cl->set_admin(1);
     }
-
-    else if(option[1] == "-o"){
-        if(ch->check_if_admin(user) == 0){
-            send(user->get_socket(), "You are not allowed\n", strlen("You are not allowed\n"), 0);
+    else if(option[2] == "-o"){
+        std::string name = option[3];
+        remove_char(name, '\n');
+        client_1 *cl = search_for_client(name);
+        if(cl == NULL){
+            send(user->get_socket(), "User not found\n", strlen("User not found\n"), 0);
+            return;
+        }//check if user is in the channel
+        if(search_for_user_in_channel(ch, cl) == 0){
+            send(user->get_socket(), "User is not in the channel\n", strlen("User is not in the channel\n"), 0);
             return;
         }
-        else{
-            remove_char(option[2], '\n');
-            ch->remove_admin_by_name(option[2]);
+        if(ch->check_if_admin(cl) == 0){
+            send(user->get_socket(), "User is not an admin\n", strlen("User is not an admin\n"), 0);
+            return;
         }
+        ch->remove_admin(cl);
+        cl->set_admin(0);
     }
-    else if(option[1] == "-l"){//max client not required
+    else if(option[2] == "-l"){//max client not required
+        int max_clients = atoi(option[3].c_str());
         if(ch->check_if_admin(user) == 0){
             send(user->get_socket(), "You are not allowed\n", strlen("You are not allowed\n"), 0);
             return;
         }
         else{
             ch->set_is_max_clients_required(1);
+            ch->set_number_of_clients(max_clients);
         }
     }
-    else if(option[1] == "+l"){
+    else if(option[2] == "+l"){//max client not required
+        int max_clients = atoi(option[3].c_str());
         if(ch->check_if_admin(user) == 0){
             send(user->get_socket(), "You are not allowed\n", strlen("You are not allowed\n"), 0);
             return;
         }
         else{
-            std::cout << "setting max clients\n";
             ch->set_is_max_clients_required(0);
-            ch->set_number_of_clients(atoi(option[2].c_str()));
+            ch->set_number_of_clients(max_clients);
         }
     }
     else{
-        send(user->get_socket(), "Incorrect option\n", strlen("Incorrect option\n"), 0);
+        send(user->get_socket(), "Incorrect mode\n", strlen("Incorrect mode\n"), 0);
     }
+
 }
 
 
@@ -225,42 +260,114 @@ int channel::get_topic_changeable()
     return topic_changeable;
 }
 
-void topic_cmd(std::vector<std::string> tokens, client_1 *user,  channel *ch)
+void topic_cmd(std::vector<std::string> tokens, client_1 *user)//need to chenge 
 {
-    if(tokens.size() == 1){//veiw topic
-        send(user->get_socket(), ch->get_topic().c_str(), ch->get_topic().size(), 0);
+    std::string name = tokens[1];
+    remove_char(name, '\n');
+    channel *ch = search_for_channel(name);
+    if(ch == NULL){
+        send(user->get_socket(), "Channel not found\n", strlen("Channel not found\n"), 0);
+        return;
     }
-    else if(tokens.size() >= 2){//set topic
+    if(check_if_user_in_channel(user, ch) == 0){
+        send(user->get_socket(), "You are not in the channel\n", strlen("You are not in the channel\n"), 0);
+        return;
+    }
+    if(tokens.size() == 2){//get topic
+        std::string msg = "The topic is: " + ch->get_topic() + "\n";
+        send(user->get_socket(), msg.c_str(), msg.size(), 0);
+    }
+    if(tokens.size() > 2){//set topic
         if(ch->get_topic_changeable() == 0 && ch->check_if_admin(user) == 0){
             send(user->get_socket(), "You are not allowed\n", strlen("You are not allowed\n"), 0);
             return;
         }
         else{
-            ch->set_topic(tokens);
+            std::cout << user->get_admin() << std::endl;
+            std::cout << ch->get_topic_changeable() << std::endl;
+            std::cout << ch->check_if_admin(user) << std::endl;
+            std::vector<std::string> topic;
+            for(size_t i = 1; i < tokens.size(); i++){
+                topic.push_back(tokens[i]);
+            }
+            ch->set_topic(topic);
         }
     }
+    // else if(tokens.size() >= 2){//set topic
+    //     if(ch->get_topic_changeable() == 0 && ch->check_if_admin(user) == 0){
+    //         send(user->get_socket(), "You are not allowed\n", strlen("You are not allowed\n"), 0);
+    //         return;
+    //     }
+    //     else{
+    //         ch->set_topic(tokens);
+    //     }
+    // }
     //in case there is more then one argument change the topic
 }
-
-void invite_cmd(std::vector<std::string> tokens, client_1 *user, channel *ch)
+client_1 *search_for_client(std::string name)
 {
-    if(tokens.size() < 2){
-        send(user->get_socket(), "Not enough options provided\n", strlen("Not enough options provided\n"), 0);
-        return;
-    }
-    std::string name = tokens[1];
     for(size_t i = 0; i < all_clients.size(); i++){
         if(all_clients[i]->get_name() == name){
-            if(all_clients[i]->ptr_channel != NULL){
-                send(user->get_socket(), "User is already in a channel\n", strlen("User is already in a channel\n"), 0);
-                return;
-            }
-            ch->add_client(all_clients[i]);
-            send(all_clients[i]->get_socket(), "You have been invited to the channel\n", strlen("You have been invited to the channel\n"), 0);
-            //you can leave the channel
-            send(all_clients[i]->get_socket(), "You can leave the channel by typing /leave\n", strlen("You can leave the channel by typing /leave\n"), 0);
-            return;
+            return all_clients[i];
         }
     }
-    send(user->get_socket(), "User not found\n", strlen("User not found\n"), 0);
+    return NULL;
+}
+void invite_cmd(std::vector<std::string> tokens, client_1 *user)//check if you are adding an removing chaneels after adding the user or kicking or removing the user
+{
+    std::string name = tokens[1];
+    std::string user_name = tokens[2];
+    client_1 *user_invited = NULL;
+    remove_char(name, '\n');
+    remove_char(user_name, '\n');
+    channel *ch = search_for_channel(name);
+    if(check_if_user_in_channel(user, ch) == 0){
+        if(ch == NULL){
+            send(user->get_socket(), "Channel not found\n", strlen("Channel not found\n"), 0);
+            return;
+        }
+        send(user->get_socket(), "You are not in the channel\n", strlen("You are not in the channel\n"), 0);
+        return;
+    }
+    else{
+        user_invited = search_for_client(user_name);
+        if(user_invited == NULL){
+            send(user->get_socket(), "User not found\n", strlen("User not found\n"), 0);
+            return;
+        }
+        if(check_if_user_in_channel(user_invited, ch) == 1){
+            send(user->get_socket(), "User is already in the channel\n", strlen("User is already in the channel\n"), 0);
+            return;
+        }
+        ch->add_client(user_invited);
+        user_invited->_channels.push_back(ch);
+        send(user_invited->get_socket(), "You have been invited to the channel\n", strlen("You have been invited to the channel\n"), 0);
+        send(user_invited->get_socket(), "You can leave the channel by typing /leave\n", strlen("You can leave the channel by typing /leave\n"), 0);
+    }
+}
+
+void sending_msg(std::vector<std::string> tokens, client_1 *user)
+{
+    std::string   name  = tokens[1];
+    remove_char(name, '\n');
+    channel *ch = search_for_channel(name);
+    if(ch == NULL){
+        send(user->get_socket(), "Channel not found\n", strlen("Channel not found\n"), 0);
+        return;
+    }
+    if(check_if_user_in_channel(user, ch) == 0){
+        send(user->get_socket(), "You are not in the channel\n", strlen("You are not in the channel\n"), 0);
+        return;
+    }
+    std::string msg;
+    msg = "from channel: " + name + " ";
+    msg += user->get_name() + ": ";
+    for(size_t i = 2; i < tokens.size(); i++){
+        msg += tokens[i] + " ";
+    }
+    msg += "\n";
+    for(size_t i = 0; i < ch->_clients.size(); i++){
+        if(ch->_clients[i]->get_socket() != user->get_socket())
+            send(ch->_clients[i]->get_socket(), msg.c_str(), msg.size(), 0);
+    }
 }

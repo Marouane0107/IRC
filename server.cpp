@@ -107,13 +107,27 @@ void Server::AcceptConnection()
 		std::cerr << "Error in epoll_ctl: " << strerror(errno) << std::endl;
 }
 
-
 void Server::HandleEvent(int fd, Server &sev, client &user)
 {
-
+	std::string command;
 	char buff[1024];
+
 	memset(buff, 0, sizeof(buff));
+	command.clear();
 	ssize_t bytes = recv(fd, buff, sizeof(buff) - 1, 0);
+	if (bytes > 0)
+	{
+		command.append(buff, bytes);
+        bool has_newline = (command.find('\n') != std::string::npos);
+		if (has_newline == 0)
+        {
+			fd_to_command[fd] += command;
+			return ;
+		}
+	}
+	fd_to_command[fd] += command;
+	command = fd_to_command[fd];
+	fd_to_command[fd].clear();
 	if (bytes <= 0)
 	{
 		user.delete_client(user.get_index_client(fd));
@@ -122,27 +136,24 @@ void Server::HandleEvent(int fd, Server &sev, client &user)
 	}
 	else
 	{
-		buff[bytes] = '\0';
-		std::string read_cmd(buff);
-		check_invalid_char(read_cmd);
-		if(read_cmd.size() > 1023)
+		check_invalid_char(command);
+		if(command.size() > 1023)
 		{
-			std::cout << "IRC: You are using the free version, You can upgrade it to the premuim version < limited offer only, 999.99$ >" << std::endl;
-			std::cout << "IRC: For more information contact : marouaneaouza@gmail.com" << std::endl;
+			std::cout << "You are using the free version, You can upgrade it to the premuim version < only 999,999$ >" << std::endl;
+			std::cout << "For more information contact us: maouzal@student.1337.ma" << std::endl;
 			return ;
 		}
 		if(user.get_index_client(fd)  == -1)
 		{
-			if (user.check_input(read_cmd, fd, sev) == 1)
+			if (user.check_input(command, fd, sev) == 1)
 				return ;
 			else
 				bzero(buff, sizeof(buff));
 		}
 		else
-			user.check_cmd(fd, read_cmd);
+			user.check_cmd(fd, command);
 	}
-	
-}
+	}
 
 void Server::InitServer(Server &sev)
 {

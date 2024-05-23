@@ -105,7 +105,7 @@ void check_other_commands(std::string input, client_1 *user)
 			}
 		}
 	}
-	 else if(tokens[0] == "/kick\n" || tokens[0] == "/kick" || tokens[0] == "kick" || tokens[0] == "THROW" || tokens[0] == "/KICK")
+	 else if(tokens[0] == "/kick\n" || tokens[0] == "/kick" || tokens[0] == "kick" || tokens[0] == "THROW" || tokens[0] == "/KICK" || tokens[0] == "KICK" || tokens[0] == "throw" || tokens[0] == "/THROW")
 	 {
 		if(tokens.size() == 3)
 			KICK_command(user, user->_channels, tokens);
@@ -157,13 +157,10 @@ void check_other_commands(std::string input, client_1 *user)
 			}
 		}
 	}
-	else if(tokens[0] == "/leave" || tokens[0] == "/leave\n" || tokens[0] == "leave" || tokens[0] == "LEAVE"){
+	else if(tokens[0] == "/leave" || tokens[0] == "/leave\n" || tokens[0] == "leave" || tokens[0] == "LEAVE" || tokens[0] == "PART" || tokens[0] == "/PART")
 		leave_channel(tokens, user);
-	}
 	else if(tokens[0] == "/chmsg" || tokens[0] == "chmsg" || tokens[0] == "CHMSG" || tokens[0] == "/CHMSG")//try to send message to a channel
-	{
 		sending_msg(tokens, user);
-	}
 	else
 		putstr_fd(user->get_socket(), "IRC: Invalid command, use /bot for more information\n");
 

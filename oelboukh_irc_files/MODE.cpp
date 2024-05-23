@@ -184,6 +184,7 @@ void MODE_command(std::vector<std::string> option, client_1 *user)
         }
         else{
             ch->set_si_password_required(1);// you can join with password
+            remove_char(option[3], '\n');
             ch->set_password(option[3]);
             send(user->get_socket(), "Password set\n", strlen("Password set\n"), 0);
             send(user->get_socket(), ch->get_password().c_str(), ch->get_password().size(), 0);

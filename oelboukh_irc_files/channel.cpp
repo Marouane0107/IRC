@@ -208,7 +208,6 @@ void channel::set_is_max_clients_required(int is_max_clients_required){
 	}
 	else if(is_max_clients_required == 1){
 		std::cout << "Max clients is not required" << std::endl;
-		
 	}
 	else{//print helping message
 		std::cout << "incorrect mode " << std::endl;
@@ -221,7 +220,7 @@ void channel::set_number_of_clients(size_t number_of_clients){
 	if(number_of_clients <= 0){
 		std::cout << "Number of clients must be greater than 0" << std::endl;
 	}
-	else if (number_of_clients > 10){
+	else if (number_of_clients > 100){
 		std::cout << "Number of clients must be less than 10" << std::endl;
 	}
 	else if(number_of_clients < this->_clients.size()){

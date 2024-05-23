@@ -131,15 +131,19 @@ void join_command(std::vector<std::string> tokens, client_1 *user)
             }
         }
         if(ch->get_channel_mode() == 1 && ch->_clients.size() < ch->get_number_of_clients()){
-                ch->add_client(user);
-        user->_channels.push_back(ch);
-        std::string message = user->get_name() + " has joined the channel" + ch->get_name() + "\n";
-        send(user->get_socket(), message.c_str(), message.size(), 0);
-        broadcast_message(ch, user, message);
-        welcome_user_channel(user->get_socket(), ch->get_name());
-        send_to_all_clients_in_channel(ch, user);
+            ch->add_client(user);
+            user->_channels.push_back(ch);
+            std::string message = user->get_name() + " has joined the channel" + ch->get_name() + "\n";
+            send(user->get_socket(), message.c_str(), message.size(), 0);
+            broadcast_message(ch, user, message);
+            welcome_user_channel(user->get_socket(), ch->get_name());
+            send_to_all_clients_in_channel(ch, user);
         }
         else{
+            std::cout <<"channel mode "<< ch->get_channel_mode() << std::endl;
+            std::cout <<"number of clients " << ch->_clients.size() << std::endl;
+            std::cout <<"|"<< ch->get_number_of_clients() << std::endl;
+            std::cout << MAX_CLIENTS << std::endl;
             send(user->get_socket(), "Channel is full, or it is invite only\n", strlen("Channel is full, or it is invite only\n"), 0);
         }
 }

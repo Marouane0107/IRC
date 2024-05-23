@@ -120,16 +120,18 @@ int search_for_user_in_channel(channel *ch, client_1 *cl)
     }
     return 0;
 }
+int check_all_if_digit(std::string str)
+{
+    remove_char(str, '\n');
+    for(size_t i = 0; i < str.size(); i++){
+        if(std::isdigit(str[i]) == 0 ){
+            return 0;
+        }
+    }
+    return 1;
+}
 void MODE_command(std::vector<std::string> option, client_1 *user)
 {
-    // if(option[1] != "+k" && option[1] != "-k" && option[1] != "+l" && option[1] != "-l" && option[1] != "+o" && option[1] != "-o"){
-    //     if(mini_check(option, user) == 0){
-    //         std::cout << "mini check failed\n";
-    //         return;
-    // }
-    // }
-   
-    //handel /mode #channel +i
     std::string name = option[1];
     remove_char(name, '\n');
     channel *ch = search_for_channel(name);
@@ -141,40 +143,44 @@ void MODE_command(std::vector<std::string> option, client_1 *user)
         putstr_fd(user->get_socket(), "You are not in the channel\n");
         return;
     }
-    if(option[2] == "+i\n"){//invite only mode to channel
+    if(option[2] == "+i\n" || option[2] == "+i"){//invite only mode to channel
         if(ch->check_if_admin(user) == 0){
             putstr_fd(user->get_socket(), "You are not allowed\n");
             return;
         }
         else{
             ch->set_channel_mode(0);
+            putstr_fd(user->get_socket(), "Channel mode set to: Invite only\n");
         }
     }
-    else if(option[2] == "-i\n"){
+    else if(option[2] == "-i\n" || option[2] == "-i"){//public mode to channel
         if(ch->check_if_admin(user) == 0){
             putstr_fd(user->get_socket(), "You are not allowed\n");
             return;
         }
         else{
             ch->set_channel_mode(1);
+            putstr_fd(user->get_socket(), "Channel mode set to: Public\n");
         }
     }
-    else if(option[2] == "-t\n"){
+    else if(option[2] == "-t\n"|| option[2] == "-t"){
         if(ch->check_if_admin(user) == 0){
             putstr_fd(user->get_socket(), "You are not allowed\n");
             return;
         }
         else{
             ch->set_topic_changeable(0);
+            putstr_fd(user->get_socket(), "Topic is not changeable\n");
         }
     }
-    else if(option[2] == "+t\n"){
+    else if(option[2] == "+t\n" || option[2] == "+t"){
         if(ch->check_if_admin(user) == 0){
             putstr_fd(user->get_socket(), "You are not allowed\n");
             return;
         }
     else{
         ch->set_topic_changeable(1);
+        putstr_fd(user->get_socket(), "Topic is changeable\n");
     }
     }
     else if(option[2] == "+k"){
@@ -189,13 +195,14 @@ void MODE_command(std::vector<std::string> option, client_1 *user)
             putstr_fd(user->get_socket(), "Password set\n");
         }
     }
-    else if(option[2] == "-k\n"){
+    else if(option[2] == "-k\n" || option[2] == "-k"){
         if(ch->check_if_admin(user) == 0){
             putstr_fd(user->get_socket(), "You are not allowed\n");
             return;
         }
         else{
             ch->set_si_password_required(0);// you can join without password
+            putstr_fd(user->get_socket(), "Password removed\n");
         }
     }
     else if(option[2] == "+o"){
@@ -216,6 +223,7 @@ void MODE_command(std::vector<std::string> option, client_1 *user)
         }
         ch->add_admin(cl);
         cl->set_admin(1);
+        putstr_fd(user->get_socket(), "User is now an admin\n");
     }
     else if(option[2] == "-o"){
         std::string name = option[3];
@@ -235,19 +243,25 @@ void MODE_command(std::vector<std::string> option, client_1 *user)
         }
         ch->remove_admin(cl);
         cl->set_admin(0);
+        putstr_fd(user->get_socket(), "User is no longer an admin\n");
     }
-    else if(option[2] == "-l"){//max client not required
-        int max_clients = atoi(option[3].c_str());
+    else if(option[2] == "-l" || option[2] == "-l\n"){//max client not required
         if(ch->check_if_admin(user) == 0){
             putstr_fd(user->get_socket(), "You are not allowed\n");
             return;
         }
         else{
             ch->set_is_max_clients_required(1);
-            ch->set_number_of_clients(max_clients);
+            ch->set_number_of_clients(MAX_CLIENTS);
+            putstr_fd(user->get_socket(), "Max clients not required\n");
         }
     }
     else if(option[2] == "+l"){//max client not required
+        //check if argument is digits
+        if(check_all_if_digit(option[3]) == 0){
+            putstr_fd(user->get_socket(), "Incorrect argument\n");
+            return;
+        }
         int max_clients = atoi(option[3].c_str());
         if(ch->check_if_admin(user) == 0){
             putstr_fd(user->get_socket(), "You are not allowed\n");
@@ -256,6 +270,7 @@ void MODE_command(std::vector<std::string> option, client_1 *user)
         else{
             ch->set_is_max_clients_required(0);
             ch->set_number_of_clients(max_clients);
+            putstr_fd(user->get_socket(), "Max clients set\n");
         }
     }
     else{

@@ -149,7 +149,7 @@ void check_other_commands(std::string input, client_1 *user)
 			send(user->get_socket(), msg.c_str(), msg.size(), 0);
 		}
 		else{
-			if((tokens[2] == "-i" || tokens[2] == "+i" || tokens[2] == "+t" || tokens[2] == "-t" ) && tokens.size() > 3){
+			if((tokens[2] == "-i" || tokens[2] == "+i" || tokens[2] == "+t" || tokens[2] == "-t" || tokens[2] == "-k") && tokens.size() > 3 && tokens[3] != "\n"){
 					send(user->get_socket(), "Error invalid argument:\n", strlen("Error invalid argument:\n"), 0);
 			}
 			else{

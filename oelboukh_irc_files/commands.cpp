@@ -123,29 +123,6 @@ void KICK_command(client_1 *user,std::vector<channel*> ch, std::vector<std::stri
                 return;
             }
         }
+        send(user->get_socket(), "User not found\n", strlen("User not found\n"), 0);
     }
 }
-    //check if the user is an admin
-    // if(user->get_admin() == 0){
-    //     send(user->get_socket(), "You are not an admin\n", strlen("You are not an admin\n"), 0);
-    //     return;
-    // }
-    // std::string name = tokens[1];
-    // remove_char(name, '\n');
-    // std::vector<client_1*>::iterator it;
-    // for (it = ch->_clients.begin(); it != ch->_clients.end(); it++){
-    //     if((*it)->get_name() == name){
-    //         //check if the user is an admin
-    //         if((*it)->get_admin() == 1 && user->get_super_admin() == 0){
-    //             send(user->get_socket(), "You can't kick an admin\n", strlen("You can't kick an admin\n"), 0);
-    //             return;
-    //         }
-    //         std::string message = "You have been kicked from the channel\n";
-    //         send((*it)->get_socket(), message.c_str(), message.size(), 0);
-    //         std::string message2 = (*it)->get_name() + " has been kicked from the channel\n";
-    //         broadcast_message(ch, user, message2);
-    //         ch->_clients.erase(std::remove(ch->_clients.begin(), ch->_clients.end(), (*it)), ch->_clients.end());
-    //         return;
-    //     }
-    // }
-    // send(user->get_socket(), "User not found\n", strlen("User not found\n"), 0);

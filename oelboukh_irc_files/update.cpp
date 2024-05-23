@@ -17,8 +17,6 @@ void client_1::set_super_admin(int super_admin){
 void update_nick_command(std::string new_nick, std::string old_nick)
 {
 	size_t i;
-	std::cout <<"----------------- "<<  std::endl;
-	std::cout <<"----------------- "<< std::endl;
 	for(i = 0; i < all_clients.size(); i++)//change nick name
 	{
 		if(all_clients[i]->get_nick() == old_nick)
@@ -93,8 +91,14 @@ void check_other_commands(std::string input, client_1 *user)
 					message += user->_channels[i]->get_name() + " ";
 					message += ft_itos(user->_channels[i]->_clients.size()) + " users\n";
 					message += "Topic: " + user->_channels[i]->get_topic() + "\n";
-					message += "Channel mode: " + ft_itos(user->_channels[i]->get_channel_mode()) + "\n";
-					message += "Password required: " + ft_itos(user->_channels[i]->get_si_password_required()) + "\n";
+					if(user->_channels[i]->get_channel_mode() == 0)
+						message += "Channel mode: Invite only\n";
+					else
+						message += "Channel mode: Public\n";
+					if(user->_channels[i]->get_si_password_required() == 0)
+						message += "Password required: No\n";
+					else
+						message += "Password required: Yes\n";
 					message += "---------------------------------\n";
 				}
 				send(user->get_socket(), message.c_str(), message.size(), 0);
@@ -164,113 +168,3 @@ void check_other_commands(std::string input, client_1 *user)
 		putstr_fd(user->get_socket(), "IRC: Invalid command, use /bot for more information\n");
 
 }
-
- // if(option[1] == "-i\n"){//remove invete only
-    //     if(ch->check_if_admin(user) == 0){
-    //         send(user->get_socket(), "You are not an admin\n", strlen("You are not an admin\n"), 0);
-    //         return;
-    //     }
-    //     else{
-    //         ch->set_channel_mode(1);//set to public channel
-    //     }
-    // }
-    // else if(option[1] == "+i\n"){//set invet only
-    //     if(ch->check_if_admin(user) == 0){
-    //         send(user->get_socket(), "You are not an admin\n", strlen("You are not an admin\n"), 0);
-    //         return;
-    //     }
-    //     else{
-    //         ch->set_channel_mode(0);//set to private channel
-    //     }
-    // }
-    // //topic changeable
-    // else if(option[1] == "+t\n")//anyone can change the topic 1 for yes
-    // {
-    //     if(ch->check_if_admin(user) == 0){
-    //         send(user->get_socket(), "You are not allowed\n", strlen("You are not allowed\n"), 0);
-    //         return;
-    //     }
-    //     else{
-    //         ch->set_topic_changeable(1);
-    //     }
-    // }
-    // else if(option[1] == "-t\n")//only admin can change the topic 0 for no 
-    // {
-    //     if(ch->check_if_admin(user) == 0){
-    //         send(user->get_socket(), "You are not allowed\n", strlen("You are not allowed\n"), 0);
-    //         return;
-    //     }
-    //     else{
-    //         ch->set_topic_changeable(0);
-    //     }
-    // }
-    // //password required
-
-    // else if(option[1] == "-k\n"){
-    //     if(ch->check_if_admin(user) == 0){
-    //         send(user->get_socket(), "You are not allowed\n", strlen("You are not allowed\n"), 0);
-    //         return;
-    //     }
-    //     else{
-    //         ch->set_si_password_required(0);// you can join without password
-    //     }
-    // }
-    
-    // else if(option[1] == "+k"){
-    //     send(user->get_socket(), "seting password\n", strlen("seting password\n"), 0);
-    //     if(ch->check_if_admin(user) == 0){
-    //         send(user->get_socket(), "You are not allowed\n", strlen("You are not allowed\n"), 0);
-    //         return;
-    //     }
-    //     else{
-    //         ch->set_si_password_required(1);// you can join with password
-    //         ch->set_password(option[2]);
-    //         send(user->get_socket(), "Password set\n", strlen("Password set\n"), 0);
-    //         send(user->get_socket(), ch->get_password().c_str(), ch->get_password().size(), 0);;
-    //     }
-    // }
-
-    // else if(option[1] == "+o"){
-    //     if(ch->check_if_admin(user) == 0){
-    //         send(user->get_socket(), "You are not allowed\n", strlen("You are not allowed\n"), 0);
-    //         return;
-    //     }
-    //     else{
-    //         remove_char(option[2], '\n');
-    //         ch->add_admine_by_name(option[2]);
-    //     }
-    // }
-
-    // else if(option[1] == "-o"){
-    //     if(ch->check_if_admin(user) == 0){
-    //         send(user->get_socket(), "You are not allowed\n", strlen("You are not allowed\n"), 0);
-    //         return;
-    //     }
-    //     else{
-    //         remove_char(option[2], '\n');
-    //         ch->remove_admin_by_name(option[2]);
-    //     }
-    // }
-    // else if(option[1] == "-l"){//max client not required
-    //     if(ch->check_if_admin(user) == 0){
-    //         send(user->get_socket(), "You are not allowed\n", strlen("You are not allowed\n"), 0);
-    //         return;
-    //     }
-    //     else{
-    //         ch->set_is_max_clients_required(1);
-    //     }
-    // }
-    // else if(option[1] == "+l"){
-    //     if(ch->check_if_admin(user) == 0){
-    //         send(user->get_socket(), "You are not allowed\n", strlen("You are not allowed\n"), 0);
-    //         return;
-    //     }
-    //     else{
-    //         std::cout << "setting max clients\n";
-    //         ch->set_is_max_clients_required(0);
-    //         ch->set_number_of_clients(atoi(option[2].c_str()));
-    //     }
-    // }
-    // else{
-    //     send(user->get_socket(), "Incorrect option\n", strlen("Incorrect option\n"), 0);
-    // }

@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include "Global.hpp"
+#include "../client.hpp"
 
 
 void list_command(int fd)
@@ -66,18 +67,29 @@ void tmp_print_vecttor(std::vector<std::string> tokens){
         std::cout << tokens[i] << std::endl;
     }
 }
-
+void send_to_all_clients_in_channel(channel *ch, client_1 *user){
+    std::vector<client_1*>::iterator it;
+    for(it = ch->_clients.begin(); it != ch->_clients.end(); it++){
+        if((*it)->get_socket() != user->get_socket()){
+            annonce_user_channel((*it)->get_socket(), ch->get_name(), user->get_nick());
+        }
+    }
+}
 void join_command(std::vector<std::string> tokens, client_1 *user)
 {
-    
+    remove_char(tokens[tokens.size() - 1], '\n');
     if(tokens.size() < 2 || tokens.size() > 3){
         std::string msg = "wrong number of arguments or invalid\n";
         send(user->get_socket(), msg.c_str(), msg.size(), 0);
         return;
     }
     std::string channel_name = tokens[1];
-    if(channel_name == "#\n"){
+    if(channel_name == "#\n"){//need to recheck
         send(user->get_socket(), "Invalid channel name\n", strlen("Invalid channel name\n"), 0);
+        return;
+    }
+    else if(channel_name == "#"){
+        send(user->get_socket(), "Invalid channel name /join #channel_name\n", strlen("Invalid channel name /join #channel_name\n"), 0);
         return;
     }
     remove_char(channel_name, '\n');
@@ -124,7 +136,8 @@ void join_command(std::vector<std::string> tokens, client_1 *user)
         std::string message = user->get_name() + " has joined the channel" + ch->get_name() + "\n";
         send(user->get_socket(), message.c_str(), message.size(), 0);
         broadcast_message(ch, user, message);
-        send(user->get_socket(), "You have joined the channel\n", strlen("You have joined the channel\n"), 0);
+        welcome_user_channel(user->get_socket(), ch->get_name());
+        send_to_all_clients_in_channel(ch, user);
         }
         else{
             send(user->get_socket(), "Channel is full, or it is invite only\n", strlen("Channel is full, or it is invite only\n"), 0);
@@ -144,6 +157,19 @@ client_1* return_new_admine(channel *ch, client_1 old_admine){
 void remove_channel_from_list_of_the_user_channels(client_1 *user, channel *ch){
     user->_channels.erase(std::remove(user->_channels.begin(), user->_channels.end(), ch), user->_channels.end());
 }
+void remove_user_from_channel(channel *ch, client_1 *user){
+    ch->_clients.erase(std::remove(ch->_clients.begin(), ch->_clients.end(), user), ch->_clients.end());
+}
+
+void send_to_all_users_in_channel(channel *ch, client_1 *user){
+    std::vector<client_1*>::iterator it;
+    for(it = ch->_clients.begin(); it != ch->_clients.end(); it++){
+        if((*it)->get_socket() != user->get_socket()){
+            annonce_user_channel_leave((*it)->get_socket(), ch->get_name(), user->get_nick());
+        }
+    }
+}
+
 void leave_channel(std::vector<std::string> tokens, client_1 *user){
     std::string name = tokens[1];
     remove_char(name, '\n');
@@ -153,16 +179,17 @@ void leave_channel(std::vector<std::string> tokens, client_1 *user){
         return;
     }
     if(std::find(ch->_clients.begin(), ch->_clients.end(), user) != ch->_clients.end()){
-        std::string message = user->get_name() + " has left the channel" + ch->get_name() + "\n";
-        broadcast_message(ch, user, message);
-        ch->remove_admin(user);
+        send_to_all_users_in_channel(ch, user);
         remove_channel_from_list_of_the_user_channels(user, ch);
-        send(user->get_socket(), "You have left the channel\n", 27, 0);
+        remove_user_from_channel(ch, user);
+        goodbye_user_channel(user->get_socket(), ch->get_name());
         if(ch->_clients.size() == 0){
             all_channels.erase(std::remove(all_channels.begin(), all_channels.end(), ch), all_channels.end());
         }
         
-        if(user->get_super_admin() == 1 && ch->_clients.size() > 0){
+        if(user->get_super_admin() == 1 && ch->_clients.size() >= 1){
+            ch->remove_admin(user);
+            std::cout << "You are the super admin\n";
             client_1 *new_admine = return_new_admine(ch, *user);
             if(new_admine != NULL){
                 new_admine->set_super_admin(1);
@@ -170,6 +197,9 @@ void leave_channel(std::vector<std::string> tokens, client_1 *user){
                 ch->add_admin(new_admine);
                 std::string message = "You are now the admin of the channel\n";
                 send(new_admine->get_socket(), message.c_str(), message.size(), 0);
+                //brodcast to the channel
+                std::string message2 = new_admine->get_name() + "-----------> is the new admin of the channel\n";
+                broadcast_message(ch, new_admine, message2);
             }
         }
     }

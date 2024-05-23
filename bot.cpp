@@ -89,7 +89,7 @@ void	annonce_user_channel(int fd, std::string channel, std::string nickname)
 	putstr_fd(fd, "+---------------| Assistance Bot is Here |-------------+\n");
 	putstr_fd(fd, "|                                                      |\n");
 	putstr_fd(fd, "| Say hello to our new friend!                         |\n");
-	putstr_fd(fd, "| " + nickname + " has joined the channel:             |\n");
+	putstr_fd(fd, "| " + nickname + " has joined the channel:             \n");
 	putstr_fd(fd, "|                  ----> " + channel + " <----         \n");
 	putstr_fd(fd, "|                                                      |\n");
 	putstr_fd(fd, "+------------------------------------------------------+\n");
@@ -100,7 +100,7 @@ void	annonce_user_channel_leave(int fd, std::string channel, std::string nicknam
 	putstr_fd(fd, "+---------------| Assistance Bot is Here |-------------+\n");
 	putstr_fd(fd, "|                                                      |\n");
 	putstr_fd(fd, "| Goodbye to our friend!                               |\n");
-	putstr_fd(fd, "| " + nickname + " has left the channel:               |\n");
+	putstr_fd(fd, "| " + nickname + " has left the channel:               \n");
 	putstr_fd(fd, "|                  ----> " + channel + " <----         \n");
 	putstr_fd(fd, "|                                                      |\n");
 	putstr_fd(fd, "+------------------------------------------------------+\n");

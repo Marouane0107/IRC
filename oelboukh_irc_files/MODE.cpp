@@ -12,9 +12,20 @@ void channel::add_admin(client_1 *cl)
 }
 
 void channel::remove_admin(client_1 *cl)
-{
+{   if(cl->get_admin() == 1){
     cl->set_admin(0);
+    if(cl->get_super_admin() == 1){
+        cl->set_super_admin(0);
+    }
     send(cl->get_socket(), "You are no longer an admin\n", strlen("You are no longer an admin\n"), 0);
+    for(size_t i = 0; i < _admins.size(); i++){
+        if(_admins[i] == cl){
+            _admins.erase(_admins.begin() + i);
+        }
+    }
+    }
+    else
+        return;
 }
 
 void channel::set_topic(std::vector<std::string> topic)
@@ -293,16 +304,6 @@ void topic_cmd(std::vector<std::string> tokens, client_1 *user)//need to chenge
             ch->set_topic(topic);
         }
     }
-    // else if(tokens.size() >= 2){//set topic
-    //     if(ch->get_topic_changeable() == 0 && ch->check_if_admin(user) == 0){
-    //         send(user->get_socket(), "You are not allowed\n", strlen("You are not allowed\n"), 0);
-    //         return;
-    //     }
-    //     else{
-    //         ch->set_topic(tokens);
-    //     }
-    // }
-    //in case there is more then one argument change the topic
 }
 client_1 *search_for_client(std::string name)
 {
@@ -342,7 +343,7 @@ void invite_cmd(std::vector<std::string> tokens, client_1 *user)//check if you a
         ch->add_client(user_invited);
         user_invited->_channels.push_back(ch);
         send(user_invited->get_socket(), "You have been invited to the channel\n", strlen("You have been invited to the channel\n"), 0);
-        send(user_invited->get_socket(), "You can leave the channel by typing /leave\n", strlen("You can leave the channel by typing /leave\n"), 0);
+        send(user_invited->get_socket(), "You can leave the channel by typing </leave #channel_name>\n", strlen("You can leave the channel by typing </leave #channel_name>\n"), 0);
     }
 }
 
@@ -360,12 +361,14 @@ void sending_msg(std::vector<std::string> tokens, client_1 *user)
         return;
     }
     std::string msg;
-    msg = "from channel: " + name + " ";
+    msg += "------------------NOTIFICATIONS-------------------\n";
+    msg += "|> ";
+    msg += "from channel: " + name + " ";
     msg += user->get_name() + ": ";
     for(size_t i = 2; i < tokens.size(); i++){
         msg += tokens[i] + " ";
     }
-    msg += "\n";
+    msg += "--------------------------------------------------";
     for(size_t i = 0; i < ch->_clients.size(); i++){
         if(ch->_clients[i]->get_socket() != user->get_socket())
             send(ch->_clients[i]->get_socket(), msg.c_str(), msg.size(), 0);

@@ -115,10 +115,10 @@ void KICK_command(client_1 *user,std::vector<channel*> ch, std::vector<std::stri
                 }
                 std::string message = "You have been kicked from the channel\n";
                 send((*it)->get_socket(), message.c_str(), message.size(), 0);
-                std::string message2 = (*it)->get_name() + " has been kicked from the channel\n";
-                broadcast_message(channel, user, message2);
+                std::string message2 = (*it)->get_name() + " has been kicked from the channel -->" + channel->get_name() + "\n";
                 channel->_clients.erase(std::remove(channel->_clients.begin(), channel->_clients.end(), (*it)), channel->_clients.end());
                 channel->remove_admin_by_name((*it)->get_name());
+                broadcast_message(channel, user, message2);
                 // (*it)->set_admin(0);
                 return;
             }

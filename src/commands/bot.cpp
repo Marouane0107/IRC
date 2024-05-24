@@ -1,10 +1,22 @@
 #include "../../includes/client.hpp"
 
-void	welcome_message(int fd) {
+void	client::welcome_message(int fd) {
 	putstr_fd(fd, "+---------------| Assistance Bot is Here |---------------+\n");
 	putstr_fd(fd, "|-------------------| Welcome to IRC |-------------------|\n");
 	putstr_fd(fd, "|                                                        |\n");
 	putstr_fd(fd, "| Welcome! You've successfully connected to the IRC!     |\n");
+	putstr_fd(fd, "|                                                        |\n");
+	putstr_fd(fd, "| Youre default information:                             |\n");
+	putstr_fd(fd, "|                                                        |\n");
+	putstr_fd(fd, "| Username: " + get_username(get_index_client(fd)) + "   \n");
+	putstr_fd(fd, "| Nickname: " + get_nickname(get_index_client(fd)) + "   \n");
+	putstr_fd(fd, "| Realname: " + get_realname(get_index_client(fd)) + "   \n");
+	putstr_fd(fd, "|                                                        |\n");
+	putstr_fd(fd, "| The information can be changed using the following:    |\n");
+	putstr_fd(fd, "| /nick <nickname> - Change your nickname                |\n");
+	putstr_fd(fd, "| /user <username> - Change your username                |\n");
+	putstr_fd(fd, "| /realname <realname> - Change your real name           |\n");
+	putstr_fd(fd, "|                                                        |\n");
 	putstr_fd(fd, "| Enjoy chatting with others. For help, type /bot.       |\n");
 	putstr_fd(fd, "|                                                        |\n");
 	putstr_fd(fd, "+--------------------------------------------------------+\n");

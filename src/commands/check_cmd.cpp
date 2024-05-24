@@ -77,16 +77,16 @@ int client::check_input(std::string input, int fd, Server &sev)
 	{
 		client_1 *user = new client_1();
 		lst_add_back(user);
-		welcome_message(fd);
 		std::cout << "A new client is connected" << std::endl;
 		set_client(fd);
+		welcome_message(fd);
 		putstr_fd(fd, "IRC: Please enter a command to continue...\n");
 		copy_data_to_client_1(user, fd, get_username(get_index_client(fd)), get_nickname(get_index_client(fd)));
 		return (0);
 	}
 	else if (input.substr(start, end - 1) == "exit" && param_count(input) == 1) ////// --------- /exit 
 	{
-		putstr_fd(fd, "IRC: You have exited the server\n");
+		putstr_fd(fd, "IRC: You have exited from the server\n");
 		close(fd);
 	}
 	else

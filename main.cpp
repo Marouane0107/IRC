@@ -4,15 +4,9 @@
 void handle_signal(int signal)
 {
     if (signal == SIGINT)
-	{
-        std::cout << "\nReceived SIGINT (Ctrl+C), exiting... " << std::endl;
         exit(0);
-    }
 	else if (signal == SIGTSTP)
-	{
-        std::cout << "\nReceived SIGTSTP (Ctrl+Z), suspending... " << std::endl;
         raise(SIGSTOP);
-    }
 }
 
 void setup_signal_handlers()

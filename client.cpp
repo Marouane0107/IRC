@@ -149,7 +149,6 @@ int check_ip_port(int fd, std::string input, Server &sev)
 		start = end;
 		i++;
 	}
-	std::cout << "i" << i << std::endl;
 	start = skep_space(input, start);
 	if (i != 3 && start < input.length())
 		return (1);

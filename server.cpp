@@ -1,6 +1,17 @@
 #include "server.hpp"
 #include "client.hpp"
 
+Server::~Server() 
+{
+    if (socketfile != -1)
+      close(socketfile);
+    if (acceptsocket != -1)
+      close(acceptsocket);
+    if (epoll_fd != -1)
+      close(epoll_fd);
+    fd_to_command.clear();
+}
+
 std::string const Server::get_port() const
 {
 	return (this->_port);
@@ -130,8 +141,9 @@ void Server::HandleEvent(int fd, Server &sev, client &user)
 	fd_to_command[fd].clear();
 	if (bytes <= 0)
 	{
-		user.delete_client(user.get_index_client(fd));
+
 		std::cout << "Client <" << fd << "> Disconnected" << std::endl;
+		user.delete_client(user.get_index_client(fd));
 		close(fd);
 	}
 	else
@@ -153,7 +165,7 @@ void Server::HandleEvent(int fd, Server &sev, client &user)
 		else
 			user.check_cmd(fd, command);
 	}
-	}
+}
 
 void Server::InitServer(Server &sev)
 {

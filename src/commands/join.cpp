@@ -1,13 +1,13 @@
-#include "channel.hpp"
-#include "../server.hpp"
-#include "Global.hpp"
-#include "join.hpp"
+#include "../../includes/channel.hpp"
+#include "../../includes/server.hpp"
+#include "../../includes/Global.hpp"
+#include "../../includes/join.hpp"
+#include "../../includes/Global.hpp"
+#include "../../includes/client.hpp"
 #include <iostream>
 #include <sstream>
 #include <vector>
 #include <string>
-#include "Global.hpp"
-#include "../client.hpp"
 
 
 void list_command(int fd)

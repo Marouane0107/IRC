@@ -1,12 +1,13 @@
 #ifndef HOW_HPP
 #define HOW_HPP
+
 #include <iostream>
 #include <cstring>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
 #include "MODE.hpp"
-#include "../client.hpp"
+#include "client.hpp"
 #include <vector>
 #include <algorithm>
 //IRC CHANNEL CLASS

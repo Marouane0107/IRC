@@ -1,8 +1,8 @@
 NAME = ircserv
 
-SRC = main.cpp client.cpp server.cpp utils.cpp bot.cpp cmd.cpp oelboukh_irc_files/channel.cpp oelboukh_irc_files/commands.cpp \
-	oelboukh_irc_files/join.cpp oelboukh_irc_files/MODE.cpp oelboukh_irc_files/Global.cpp \
-	oelboukh_irc_files/update.cpp
+SRC = src/server/main.cpp src/client/client.cpp src/server/server.cpp src/client/utils.cpp src/commands/bot.cpp \
+	src/commands/check_cmd.cpp src/commands/cmd.cpp src/channels/channel.cpp src/commands/commands.cpp \
+	src/commands/join.cpp src/commands/MODE.cpp src/channels/Global.cpp src/commands/update.cpp
 
 OBJ = $(SRC:.cpp=.o)
 

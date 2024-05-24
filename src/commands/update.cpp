@@ -1,13 +1,11 @@
-#include "../client.hpp"
-#include <iostream>
-#include <string>
-#include <vector>
-#include <sstream>
-#include "../server.hpp"
-#include "channel.hpp"
-#include "Global.hpp"
-#include "MODE.hpp"
-#include "join.hpp"
+#include "../../includes/client.hpp"
+#include "../../includes/server.hpp"
+#include "../../includes/channel.hpp"
+#include "../../includes/Global.hpp"
+#include "../../includes/MODE.hpp"
+#include "../../includes/join.hpp"
+
+
 int client_1::get_super_admin(){
 	return this->super_admin;
 }

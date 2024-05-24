@@ -1,8 +1,9 @@
-#include "join.hpp"
 #include <sstream>
-#include "channel.hpp"
-#include "../server.hpp"
-#include "Global.hpp"
+#include "../../includes/join.hpp"
+#include "../../includes/channel.hpp"
+#include "../../includes/server.hpp"
+#include "../../includes/Global.hpp"
+
 //remove admis accses to the channel
 void remove(channel *ch, client_1 *user)
 {

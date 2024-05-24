@@ -1,5 +1,4 @@
-#include "server.hpp"
-#include "client.hpp"
+#include "../../includes/server.hpp"
 
 Server::~Server() 
 {
@@ -151,8 +150,8 @@ void Server::HandleEvent(int fd, Server &sev, client &user)
 		check_invalid_char(command);
 		if(command.size() > 1023)
 		{
-			std::cout << "You are using the free version, You can upgrade it to the premuim version < only 999,999$ >" << std::endl;
-			std::cout << "For more information contact us: maouzal@student.1337.ma" << std::endl;
+			putstr_fd(fd, "You are using the free version, You can upgrade it to the premuim version < only 999,999$ >");
+			putstr_fd(fd, "For more information contact us: maouzal@student.1337.ma");
 			return ;
 		}
 		if(user.get_index_client(fd)  == -1)

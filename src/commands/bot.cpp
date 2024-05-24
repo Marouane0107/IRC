@@ -1,4 +1,4 @@
-#include "client.hpp"
+#include "../../includes/client.hpp"
 
 void	welcome_message(int fd) {
 	putstr_fd(fd, "+---------------| Assistance Bot is Here |---------------+\n");

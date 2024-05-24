@@ -2,6 +2,9 @@
 #define CLIENT_HPP
 
 #include "server.hpp"
+#include "channel.hpp"
+#include "update.hpp"
+#include "Global.hpp"
 
 #include <string>
 #include <fstream>
@@ -9,8 +12,8 @@
 #include <sstream>
 #include <errno.h>
 
-const int MAX_CLIENTS = 100; // Maximum number of clients
-const int MAX_BUFFER_SIZE = 1024; // Maximum size of buffer for receiving messages
+const int MAX_CLIENTS = 100;
+const int MAX_BUFFER_SIZE = 1024;
 
 class Server;
 class client
@@ -55,6 +58,14 @@ class client
 		void	check_cmd(int fd, std::string input);
 		int		check_if_aviable(std::string input, std::string *list);
 		int		send_file(int fd, int fd_recv, std::string file);
+		//-------------------------------------------------------------+ cmd
+		void	nick(int fd, int index, std::string param);
+		void	user(int fd, int index, std::string param);
+		void	realname(int fd, int index, std::string param);
+		void	quit(int fd, int index);
+		void	PRIVMSG(int fd, int index, std::string param, std::string input);
+		void	FILEMSG(int fd, int index, std::string param, std::string input);
+		void	file_confirmation(int fd, int index, std::string input, size_t start, size_t end);
 };
 
 //-------------------------------------------------------------+ bot

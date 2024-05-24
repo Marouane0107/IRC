@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 #include "channel.hpp"
-#include "../server.hpp"
+#include "server.hpp"
 
 std::vector<std::string> split(const std::string& str, char delimiter);
 channel *search_for_channel(std::string name);

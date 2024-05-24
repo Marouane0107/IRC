@@ -1,9 +1,9 @@
-#include "../server.hpp"
-#include "MODE.hpp"
-#include "channel.hpp"
-#include "join.hpp"
-#include <iostream>
-#include "Global.hpp"
+#include "../../includes/server.hpp"
+#include "../../includes/MODE.hpp"
+#include "../../includes/channel.hpp"
+#include "../../includes/join.hpp"
+#include "../../includes/Global.hpp"
+
 void channel::add_admin(client_1 *cl)
 {
     cl->set_admin(1);

@@ -1,5 +1,6 @@
 #ifndef mode_hpp
 #define mode_hpp
+
 #include "channel.hpp"
 #include <vector>
 #include <iostream>

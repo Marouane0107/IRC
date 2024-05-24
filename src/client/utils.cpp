@@ -1,5 +1,55 @@
-#include "client.hpp"
+#include "../../includes/client.hpp"
 
+
+int check_ip_port(int fd, std::string input, Server &sev)
+{
+	size_t i = 0;
+	size_t start = 0;
+	size_t end = 0;
+	std::string ip = sev.get_address();
+	std::string port = sev.get_port();
+	std::string pass = sev.get_pass();
+
+	while (end < input.length() && input[end] != '\0' && input[end] != '\n')
+	{
+		start = skep_space(input, start);
+		end = start;
+		if (input[start] == '\0' || input[start] == '\n')
+			break;
+		while(input[end] != '\0' && input[end] != ' ' && input[end] != '\n' && end < input.length())
+			end++;
+		if (i == 0)
+		{
+			if(get_param(input, 1, 1) != ip)
+			{
+				putstr_fd(fd, "Invalid ip / \n");
+				return (1);
+			}
+		}
+		else if (i == 1)
+		{
+			if(get_param(input, 2, 1) != port)
+			{
+				putstr_fd(fd, "Invalid port / \n");
+				return (1);
+			}
+		}
+		else if (i == 2)
+		{
+			if (get_param(input, 3, 1) != pass)
+			{
+				putstr_fd(fd, "Invalid password / \n");
+				return (1);
+			}
+		}
+		start = end;
+		i++;
+	}
+	start = skep_space(input, start);
+	if (i != 3 && start < input.length())
+		return (1);
+	return (0);
+}
 
 std::string ft_itos(int value) {
     std::ostringstream oss;

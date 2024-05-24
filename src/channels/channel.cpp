@@ -1,7 +1,7 @@
-#include "channel.hpp"
-#include "Global.hpp"
-#include "join.hpp"
-#include "../client.hpp"
+#include "../../includes/channel.hpp"
+#include "../../includes/Global.hpp"
+#include "../../includes/join.hpp"
+#include "../../includes/client.hpp"
 
 void client_1::set_socket(int socket){
 	this->_socket = socket;

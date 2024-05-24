@@ -1,5 +1,4 @@
-#include "server.hpp"
-#include "client.hpp"
+#include "../../includes/server.hpp"
 
 void handle_signal(int signal)
 {

@@ -95,8 +95,8 @@ void	client::set_client(int fd)
 		if (_fd[index] <= 0 )
 		{
 			_fd[index] = fd;
-			_username[index] = "User_" + ft_itos(index);
-			_nickname[index] = "Nickname_" + ft_itos(index);
+			_username[index] = "User" + ft_itos(index);
+			_nickname[index] = "Nickname" + ft_itos(index);
 			_realname[index] = "Unknown";
 			return ;
 		}
@@ -158,7 +158,7 @@ int		client::check_if_aviable(std::string input, std::string* list)
 	std::string name;
 	size_t start = skep_space(input, 0);
 	size_t end = start;
-	while(input.length() > 0 && std::isalpha(input[end]) && end < input.length())
+	while((input.length() > 0 && end < input.length()) && (std::isalpha(input[end]) || std::isdigit(input[end])))
 		end++;
 	if (input[end] != '\0' && input[end] != ' ' && input[end] != '\n')
 		return (2);

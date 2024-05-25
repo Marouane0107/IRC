@@ -17,10 +17,12 @@ void update_nick_command(std::string new_nick, std::string old_nick)
 	size_t i;
 	for(i = 0; i < all_clients.size(); i++)//change nick name
 	{
-		if(all_clients[i]->get_nick() == old_nick)
-		{
-			all_clients[i]->set_nick(new_nick);
-			return;
+		if(all_clients[i] != NULL){
+			if(all_clients[i]->get_nick() == old_nick)
+			{
+				all_clients[i]->set_nick(new_nick);
+				return;
+			}
 		}
 	}
 }
@@ -30,10 +32,12 @@ void update_user_command(std::string new_user, std::string old_user)
 	size_t i;
 	for(i = 0; i < all_clients.size(); i++)//change user name
 	{
-		if(all_clients[i]->get_name() == old_user)
-		{
-			all_clients[i]->set_name(new_user);
-			return;
+		if(all_clients[i] != NULL){
+			if(all_clients[i]->get_name() == old_user)
+			{
+				all_clients[i]->set_name(new_user);
+				return;
+			}
 		}
 	}
 }
@@ -43,10 +47,12 @@ void update_real_name_command(std::string real_name, std::string nick)
 	size_t i;
 	for(i = 0; i < all_clients.size(); i++)//change real name
 	{
-		if(all_clients[i]->get_nick() == nick)
-		{
-			all_clients[i]->set_real_name(real_name);
-			return;
+		if(all_clients[i] != NULL){
+			if(all_clients[i]->get_real_name() == nick)
+			{
+				all_clients[i]->set_real_name(real_name);
+				return;
+			}
 		}
 	}
 }

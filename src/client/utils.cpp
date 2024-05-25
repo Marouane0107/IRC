@@ -22,6 +22,7 @@ int check_ip_port(int fd, std::string input, Server &sev)
 		{
 			if(get_param(input, 1, 1) != ip)
 			{
+				putstr_fd(fd, "Authentication failed\n");
 				putstr_fd(fd, "Invalid ip / \n");
 				return (1);
 			}
@@ -30,6 +31,7 @@ int check_ip_port(int fd, std::string input, Server &sev)
 		{
 			if(get_param(input, 2, 1) != port)
 			{
+				putstr_fd(fd, "Authentication failed\n");
 				putstr_fd(fd, "Invalid port / \n");
 				return (1);
 			}
@@ -38,6 +40,7 @@ int check_ip_port(int fd, std::string input, Server &sev)
 		{
 			if (get_param(input, 3, 1) != pass)
 			{
+				putstr_fd(fd, "Authentication failed\n");
 				putstr_fd(fd, "Invalid password / \n");
 				return (1);
 			}

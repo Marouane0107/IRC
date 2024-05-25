@@ -77,8 +77,11 @@ void send_to_all_clients_in_channel(channel *ch, client_1 *user){
 }
 void join_command(std::vector<std::string> tokens, client_1 *user)
 {
-    remove_char(tokens[tokens.size() - 1], '\n');
-    if(tokens.size() < 2 || tokens.size() > 3){
+    if(tokens[tokens.size() - 1] == "\n"){
+        tokens.pop_back();
+    }
+
+    if(tokens.size() < 2){
         std::string msg = "wrong number of arguments or invalid\n";
         send(user->get_socket(), msg.c_str(), msg.size(), 0);
         return;
@@ -120,12 +123,15 @@ void join_command(std::vector<std::string> tokens, client_1 *user)
             send(user->get_socket(), "You are already in this channel\n", strlen("You are already in this channel\n"), 0);
     }
     else{
+        remove_char(tokens[2], '\n');
         if(ch->get_si_password_required() == 1){
             if(tokens.size() < 3){
                 send(user->get_socket(), "Password required\n", strlen("Password required\n"), 0);
                 return;
             }
             else if(ch->get_password() != tokens[2]){
+                std::cout << "password |" << ch->get_password() << "|" << std::endl;
+                std::cout << "password |" << tokens[2] << "|" << std::endl;
                 send(user->get_socket(), "Incorrect password\n", strlen("Incorrect password\n"), 0);
                 return;
             }
@@ -209,5 +215,35 @@ void leave_channel(std::vector<std::string> tokens, client_1 *user){
     }
     else{
         send(user->get_socket(), "You are not in the channel\n", 28, 0);
+    }
+}
+
+void leave_channels(std::string name,  client_1 *user){
+    channel *ch = search_for_channel(name);
+    if(ch == NULL){
+        return;
+    }
+    if(std::find(ch->_clients.begin(), ch->_clients.end(), user) != ch->_clients.end()){
+        send_to_all_users_in_channel(ch, user);
+        remove_channel_from_list_of_the_user_channels(user, ch);
+        remove_user_from_channel(ch, user);
+        if(ch->_clients.size() == 0){
+            all_channels.erase(std::remove(all_channels.begin(), all_channels.end(), ch), all_channels.end());
+        }
+        if(user->get_super_admin() == 1 && ch->_clients.size() >= 1){
+            ch->remove_admin(user);//here
+            client_1 *new_admine = return_new_admine(ch, *user);
+            if(new_admine != NULL){
+                new_admine->set_super_admin(1);
+                new_admine->set_admin(1);
+                ch->add_admin(new_admine);
+                ch->get_admins().push_back(new_admine);
+                std::string message = "You are now the admin of the channel\n";
+                send(new_admine->get_socket(), message.c_str(), message.size(), 0);
+                //brodcast to the channel
+                std::string message2 = new_admine->get_name() + "-----------> is the new admin of the channel\n";
+                broadcast_message(ch, new_admine, message2);
+            }
+        }
     }
 }

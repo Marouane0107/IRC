@@ -53,6 +53,13 @@ void copy_data_to_client_1(client_1 *user, int fd, std::string name, std::string
 	user->set_name(name);
 	user->set_nick(nick);
 	user->set_admin(0);
+	for(size_t i = 0; i < all_clients.size(); i++)
+	{
+		if(all_clients[i] == NULL){
+			all_clients[i] = user;
+			return ;
+		}
+	}
 	all_clients.push_back(user);
 }
 

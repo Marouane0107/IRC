@@ -9,4 +9,5 @@ class channel;
 void MODE_command(std::vector<std::string> option, client_1 *user);
 client_1 *search_for_client(std::string name);
 void leave_channel(std::vector<std::string> tokens, client_1 *user);
+void leave_channels(std::string name,  client_1 *user);
 #endif

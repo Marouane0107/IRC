@@ -20,7 +20,6 @@ void update_nick_command(std::string new_nick, std::string old_nick)
 		if(all_clients[i]->get_nick() == old_nick)
 		{
 			all_clients[i]->set_nick(new_nick);
-			std::cout << "Nick name updated" << std::endl;
 			return;
 		}
 	}
@@ -34,7 +33,6 @@ void update_user_command(std::string new_user, std::string old_user)
 		if(all_clients[i]->get_name() == old_user)
 		{
 			all_clients[i]->set_name(new_user);
-			std::cout << "User name updated" << std::endl;
 			return;
 		}
 	}
@@ -48,7 +46,6 @@ void update_real_name_command(std::string real_name, std::string nick)
 		if(all_clients[i]->get_nick() == nick)
 		{
 			all_clients[i]->set_real_name(real_name);
-			std::cout << "Real name updated" << std::endl;
 			return;
 		}
 	}
@@ -105,6 +102,10 @@ void check_other_commands(std::string input, client_1 *user)
 	}
 	 else if(tokens[0] == "/kick\n" || tokens[0] == "/kick" || tokens[0] == "kick" || tokens[0] == "THROW" || tokens[0] == "/KICK" || tokens[0] == "KICK" || tokens[0] == "throw" || tokens[0] == "/THROW")
 	 {
+		if(tokens[tokens.size() - 1] == "\n")
+		{
+			tokens.pop_back();
+		}
 		if(tokens.size() == 3)
 			KICK_command(user, user->_channels, tokens);
 		else{
@@ -117,6 +118,10 @@ void check_other_commands(std::string input, client_1 *user)
 	 }
 
 	else if(tokens[0] == "/topic" || tokens[0] == "/topic\n" || tokens[0] == "topic" || tokens[0] == "TOPIC"){
+		if(tokens[tokens.size() - 1] == "\n")
+		{
+			tokens.pop_back();
+		}
 		if(user->_channels.size() == 0)
 		{
 			std::string msg = "You are not in a channel yet, try to creat one >/join #channel_name\n";

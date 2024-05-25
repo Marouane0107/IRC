@@ -143,6 +143,7 @@ void Server::HandleEvent(int fd, Server &sev, client &user)
 
 		std::cout << "Client <" << fd << "> Disconnected" << std::endl;
 		user.delete_client(user.get_index_client(fd));
+		delete_user_from_channel(fd);
 		close(fd);
 	}
 	else

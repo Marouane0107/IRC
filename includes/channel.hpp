@@ -119,6 +119,7 @@ void remove_char(std::string &str, char ch);
 void update_user_command(std::string new_user, std::string old_user);
 void send_to_all_clients_in_channel(channel *ch, client_1 *user);
 void sending_msg(std::vector<std::string> tokens, client_1 *user);
+void delete_user_from_channel(int fd);
 void list_command(int fd);
 std::vector<std::string> split(const std::string& str, char delimiter);
 #endif

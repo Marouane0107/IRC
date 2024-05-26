@@ -12,7 +12,7 @@
 #include <sstream>
 #include <errno.h>
 
-const int MAX_CLIENTS = 3;
+const int MAX_CLIENTS = 50;
 const int MAX_BUFFER_SIZE = 1024;
 
 class Server;

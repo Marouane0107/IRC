@@ -244,7 +244,7 @@ void leave_channels(std::string name,  client_1 *user){
         }
         if(user->get_super_admin() == 1 && ch->_clients.size() >= 1){
             client_1 *new_admine = return_new_admine(ch, *user);
-            if(new_admine != NULL && !search_for_user_in_channel_by_name(new_admine, ch->get_name())){
+            if(new_admine != NULL /*&& !search_for_user_in_channel_by_name(new_admine, ch->get_name())*/){
                 new_admine->set_super_admin(1);
                 new_admine->set_admin(1);
                 ch->add_admin(new_admine);
@@ -254,23 +254,23 @@ void leave_channels(std::string name,  client_1 *user){
                 //brodcast to the channel
                 std::string message2 = new_admine->get_name() + "-----------> is the new admin of the channel\n";
                 broadcast_message(ch, new_admine, message2);
-            }
-           if( check_if_channel_has_super_admin(ch) == 0){
-                //setting the first user in the channel as the super admin
-                std::vector<client_1*>::iterator it;
-                for(it = ch->_clients.begin(); it != ch->_clients.end(); it++){
-                    if((*it)->get_super_admin() == 0){
-                        (*it)->set_super_admin(1);
-                        (*it)->set_admin(1);
-                        ch->add_admin(*it);
-                        ch->get_admins().push_back(*it);
-                        std::string message = "You are now the super admin of the channel\n";
-                        send((*it)->get_socket(), message.c_str(), message.size(), 0);
-                        break;
-                    }
-                }
-                return;
-            }
+            }//need to be fixed
+        //    if( check_if_channel_has_super_admin(ch) == 0){
+        //         //setting the first user in the channel as the super admin
+        //         std::vector<client_1*>::iterator it;
+        //         for(it = ch->_clients.begin(); it != ch->_clients.end(); it++){
+        //             if((*it)->get_super_admin() == 0){
+        //                 (*it)->set_super_admin(1);
+        //                 (*it)->set_admin(1);
+        //                 ch->add_admin(*it);
+        //                 ch->get_admins().push_back(*it);
+        //                 std::string message = "You are now the super admin of the channel\n";
+        //                 send((*it)->get_socket(), message.c_str(), message.size(), 0);
+        //                 break;
+        //             }
+        //         }
+        //         return;
+        //     }
            }
         }
 }

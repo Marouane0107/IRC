@@ -310,7 +310,7 @@ void topic_cmd(std::vector<std::string> tokens, client_1 *user)//need to chenge
 void remove_user_all_clents(int fd)
 {
     for(size_t i = 0; i < all_clients.size(); i++){
-        if(all_clients[i]->get_socket() == fd){
+        if(all_clients[i] && all_clients[i]->get_socket() == fd){
             all_clients[i]->get_name().clear();
             all_clients[i]->get_nick().clear();
             all_clients[i]->set_socket(-1);
@@ -368,8 +368,12 @@ void remove_user_form_all_channels(std::string name)
     user = search_for_client(name);
     if (user != NULL) { 
     // Check if user is not NULL
-        for(size_t i = 0; i < user->_channels.size(); i++){
-            leave_channels(user->_channels[i]->get_name(), user);
+        size_t max = user->_channels.size();
+        std::vector<channel*> ch = user->_channels;
+        for(size_t i = 0; i < max; i++){
+            std::cout << "Channel name: " << ch[i]->get_name() <<"|=======|"<< "===|" << std::endl;
+            std::cout << i << "|=======|" << max << std::endl;
+            leave_channels(ch[i]->get_name(), user);
         }
     }
 }

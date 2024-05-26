@@ -130,8 +130,6 @@ void join_command(std::vector<std::string> tokens, client_1 *user)
                 return;
             }
             else if(ch->get_password() != tokens[2]){
-                std::cout << "password |" << ch->get_password() << "|" << std::endl;
-                std::cout << "password |" << tokens[2] << "|" << std::endl;
                 send(user->get_socket(), "Incorrect password\n", strlen("Incorrect password\n"), 0);
                 return;
             }
@@ -164,9 +162,12 @@ client_1* return_new_admine(channel *ch, client_1 old_admine){
     }
     return NULL;
 }
-void remove_channel_from_list_of_the_user_channels(client_1 *user, channel *ch){
+
+void remove_channel_from_list_of_the_user_channels(client_1 *user, channel *ch)
+{
     user->_channels.erase(std::remove(user->_channels.begin(), user->_channels.end(), ch), user->_channels.end());
 }
+
 void remove_user_from_channel(channel *ch, client_1 *user){
     ch->_clients.erase(std::remove(ch->_clients.begin(), ch->_clients.end(), user), ch->_clients.end());
 }
@@ -199,7 +200,6 @@ void leave_channel(std::vector<std::string> tokens, client_1 *user){
         
         if(user->get_super_admin() == 1 && ch->_clients.size() >= 1){
             ch->remove_admin(user);
-            std::cout << "You are the super admin\n";
             client_1 *new_admine = return_new_admine(ch, *user);
             if(new_admine != NULL){
                 new_admine->set_super_admin(1);
@@ -231,7 +231,8 @@ void leave_channels(std::string name,  client_1 *user){
             all_channels.erase(std::remove(all_channels.begin(), all_channels.end(), ch), all_channels.end());
         }
         if(user->get_super_admin() == 1 && ch->_clients.size() >= 1){
-            ch->remove_admin(user);//here
+            std::cout << "You are the super admin\n";
+            // ch->remove_admin(user);//here
             client_1 *new_admine = return_new_admine(ch, *user);
             if(new_admine != NULL){
                 new_admine->set_super_admin(1);

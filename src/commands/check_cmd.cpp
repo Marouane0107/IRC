@@ -82,6 +82,11 @@ int client::check_input(std::string input, int fd, Server &sev)
 	}
 	if (input.substr(start, end - 1) == "connect" && check_ip_port(fd , input.substr(end, input.length() - end), sev) == 0 && param_count(input) == 4)
 	{
+		if (check_max_clients() == -1)
+		{
+			putstr_fd(fd, "IRC: The server is full, please try again later\n");
+			return (1);
+		}
 		client_1 *user = new client_1();
 		lst_add_back(user);
 		std::cout << "A new client is connected" << std::endl;
@@ -139,3 +144,14 @@ int	client::send_file(int fd, int fd_recv, std::string file)
     return (0);
 }
 
+int	client::check_max_clients()
+{
+	int i = 0;
+	while (i < MAX_CLIENTS)
+	{
+		if (_fd[i] == 0 || _fd[i] == -1)
+			return (i);
+		i++;
+	}
+	return (-1);
+}

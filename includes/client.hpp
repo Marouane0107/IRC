@@ -54,6 +54,7 @@ class client
 		void	set_address(std::string address);
 		void	init_all(Server &sev);
 		void	delete_client(int index);
+		int		check_max_clients();
 		int		check_input(std::string input, int fd, Server &sev);
 		void	check_cmd(int fd, std::string input);
 		int		check_if_aviable(std::string input, std::string *list);

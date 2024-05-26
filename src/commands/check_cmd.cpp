@@ -139,8 +139,8 @@ int	client::send_file(int fd, int fd_recv, std::string file)
 		putstr_fd(fd_recv, content);
 		return (2);
 	}
-	set_save(content, fd_recv);
-	set_flag(fd, fd_recv);
+	set_save(content, get_index_client(fd_recv));
+	set_flag(fd, get_index_client(fd_recv));
     return (0);
 }
 

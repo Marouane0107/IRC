@@ -111,21 +111,21 @@ void    client::file_confirmation(int fd, int index, std::string input, size_t s
     if (input.substr(start, end - 1) == "Yes")
 		{
 			putstr_fd(fd, "IRC: You have accepted to receive the file :\n");
-			putstr_fd(fd, _save[fd]);
-			_save[fd].clear();
-			set_flag(-1, fd);
+			putstr_fd(fd, _save[get_index_client(fd)]);
+			_save[get_index_client(fd)].clear();
+			set_flag(-1, get_index_client(fd));
 		}
 		else if (input.substr(start, end - 1) == "No")
 		{
 			putstr_fd(fd, "IRC: You have refused to receive the file\n");
 			_save[index].clear();
-			set_flag(-1, fd);
+			set_flag(-1, get_index_client(fd));
 		}
 		else
 		{
 			putstr_fd(fd, "IRC: You have refused to receive the file\n");
-			_save[fd].clear();
-			set_flag(-1, fd);
+			_save[get_index_client(fd)].clear();
+			set_flag(-1, get_index_client(fd));
 			putstr_fd(fd, "IRC: Invalid command, use /bot for more information\n");
 		}
 }

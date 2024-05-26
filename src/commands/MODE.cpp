@@ -8,7 +8,7 @@ void channel::add_admin(client_1 *cl)
 {
     cl->set_admin(1);
     _admins.push_back(cl);
-    putstr_fd(cl->get_socket(), "IRC: You are now an admin\n");
+    // putstr_fd(cl->get_socket(), "IRC: You are now an admin\n");
 }
 
 void channel::remove_admin(client_1 *cl)
@@ -52,7 +52,6 @@ void channel::set_si_password_required(int si_password_required)
 void channel::set_name(std::string name)
 {
     _name = name;
-    std::cout << "IRC: Channel name set to: " << _name << std::endl;
 }
 
 std::string channel::get_topic()
@@ -110,10 +109,6 @@ void MODE_command(std::vector<std::string> option, client_1 *user)
     }
     if(option[2] == "+i\n" || option[2] == "+i"){//invite only mode to channel
         if(ch->check_if_admin(user) == 0){
-            std::cout << user->get_name() << std::endl;
-            std::cout << user->get_admin() << std::endl;
-            std::cout << ch->get_admins().size() << std::endl;
-            std::cout << user->get_super_admin() << std::endl;
             putstr_fd(user->get_socket(), "IRC :You are not allowed\n");
             return;
         }
@@ -282,9 +277,6 @@ void topic_cmd(std::vector<std::string> tokens, client_1 *user)//need to chenge
             return;
         }
         else{
-            std::cout << user->get_admin() << std::endl;
-            std::cout << ch->get_topic_changeable() << std::endl;
-            std::cout << ch->check_if_admin(user) << std::endl;
             std::vector<std::string> topic;
             for(size_t i = 1; i < tokens.size(); i++){
                 topic.push_back(tokens[i]);

@@ -62,11 +62,7 @@ void chat_section(channel *ch, client_1 *sender, const std::string &message) {
     std::string msg = sender->get_name() + ": " + message;
     broadcast_message(ch, sender, msg);
 }
-void tmp_print_vecttor(std::vector<std::string> tokens){
-    for(size_t i = 0; i < tokens.size(); i++){
-        std::cout << tokens[i] << std::endl;
-    }
-}
+
 void send_to_all_clients_in_channel(channel *ch, client_1 *user){
     std::vector<client_1*>::iterator it;
     for(it = ch->_clients.begin(); it != ch->_clients.end(); it++){
@@ -176,12 +172,7 @@ void send_to_all_users_in_channel(channel *ch, client_1 *user){
         }
     }
 }
-void print_all_users_in_channel(channel *ch){
-    std::vector<client_1*>::iterator it;
-    for(it = ch->_clients.begin(); it != ch->_clients.end(); it++){
-        std::cout <<"--------------------->:"<< (*it)->get_name() << std::endl;
-    }
-}
+
 void leave_channel(std::vector<std::string> tokens, client_1 *user){
     std::string name = tokens[1];
     remove_char(name, '\n');
@@ -200,7 +191,6 @@ void leave_channel(std::vector<std::string> tokens, client_1 *user){
         }
         
         if(user->get_super_admin() == 1 && ch->_clients.size() >= 1){
-            print_all_users_in_channel(ch);
             ch->remove_admin(user);
             client_1 *new_admine = return_new_admine(ch, *user);
             if(new_admine != NULL){
@@ -220,8 +210,26 @@ void leave_channel(std::vector<std::string> tokens, client_1 *user){
     }
 }
 
+int search_for_user_in_channel_by_name(client_1* user, std::string name){
+    std::vector<channel*>::iterator it;
 
-
+    it = user->_channels.begin();
+    for(it = user->_channels.begin(); it != user->_channels.end(); it++){
+        if((*it)->get_name() == name){
+            return 1;
+        }
+    }
+    return 0;
+}
+int check_if_channel_has_super_admin(channel *ch){
+    std::vector<client_1*>::iterator it;
+    for(it = ch->_clients.begin(); it != ch->_clients.end(); it++){
+        if((*it)->get_super_admin() == 1){
+            return 1;
+        }
+    }
+    return 0;
+}
 void leave_channels(std::string name,  client_1 *user){
     channel *ch = search_for_channel(name);
     if(ch == NULL){
@@ -236,18 +244,33 @@ void leave_channels(std::string name,  client_1 *user){
         }
         if(user->get_super_admin() == 1 && ch->_clients.size() >= 1){
             client_1 *new_admine = return_new_admine(ch, *user);
-            if(new_admine != NULL){
+            if(new_admine != NULL && !search_for_user_in_channel_by_name(new_admine, ch->get_name())){
                 new_admine->set_super_admin(1);
                 new_admine->set_admin(1);
                 ch->add_admin(new_admine);
                 ch->get_admins().push_back(new_admine);
                 std::string message = "You are now the admin of the channel---------------->\n";
-                std::cout <<"---------------------"<< ch->_clients.size() << std::endl;
-                send(new_admine->get_socket(), message.c_str(), message.size(), 0);
+                // send(new_admine->get_socket(), message.c_str(), message.size(), 0);
                 //brodcast to the channel
                 std::string message2 = new_admine->get_name() + "-----------> is the new admin of the channel\n";
                 broadcast_message(ch, new_admine, message2);
             }
+           if( check_if_channel_has_super_admin(ch) == 0){
+                //setting the first user in the channel as the super admin
+                std::vector<client_1*>::iterator it;
+                for(it = ch->_clients.begin(); it != ch->_clients.end(); it++){
+                    if((*it)->get_super_admin() == 0){
+                        (*it)->set_super_admin(1);
+                        (*it)->set_admin(1);
+                        ch->add_admin(*it);
+                        ch->get_admins().push_back(*it);
+                        std::string message = "You are now the super admin of the channel\n";
+                        send((*it)->get_socket(), message.c_str(), message.size(), 0);
+                        break;
+                    }
+                }
+                return;
+            }
+           }
         }
-    }
 }

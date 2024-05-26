@@ -19,7 +19,6 @@ int channel::check_if_admin(client_1 *cl){
 	//check if the client is an admin
 	for(it = _admins.begin(); it != _admins.end(); it++){
 		if((*it)->get_socket() == cl->get_socket()){
-			std::cout << "Admin found" << (*it)->get_name() << std::endl;
 			return 1;
 		}
 	}
@@ -69,7 +68,6 @@ void channel::remove_admin_by_name(std::string name){
 			return;
 		}
 	}
-	std::cout << "Admin not found" << std::endl;
 }
 
 client_1::client_1(){
@@ -84,13 +82,10 @@ client_1::client_1(){
 
 void channel::set_topic_changeable(int topic_changeable){
 	if(topic_changeable == 0){
-		std::cout << "Topic is not changeable for non admins " << std::endl;
 	}
 	else if(topic_changeable == 1){
-		std::cout << "Topic is changeable" << std::endl;
 	}
 	else{//print helping message
-		std::cout << "incorrect mode " << std::endl;
 	}
 	this->topic_changeable = topic_changeable;
 }

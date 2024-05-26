@@ -75,19 +75,7 @@ int channel::get_si_password_required()
     return si_password_required;
 }
 
-// int mini_check(std::vector<std::string> option, client_1 *user){
-//     if(option.size() <= 1){
-//         putstr_fd(user->get_socket(), "Not enough options provided\n", strlen("Not enough options provided\n"), 0);
-//         return 0;
-//     }
-//     else if(option.size() > 2){
-//         putstr_fd(user->get_socket(), "Too many options provided\n", strlen("Too many options provided\n"), 0);
-//         return 0;
-//     }
-//     return 2;
-// }
-// /MODE #channel_mode +i 
-// /MODE #channel_mode -i
+
 int search_for_user_in_channel(channel *ch, client_1 *cl)
 {
     for(size_t i = 0; i < ch->_clients.size(); i++){
@@ -266,7 +254,6 @@ void MODE_command(std::vector<std::string> option, client_1 *user)
 }
 
 
-//put this in other file
 int channel::get_topic_changeable()
 {
     return topic_changeable;
@@ -405,7 +392,7 @@ client_1 *search_for_client(std::string name)
     return NULL;
 }
 
-void invite_cmd(std::vector<std::string> tokens, client_1 *user)//check if you are adding an removing chaneels after adding the user or kicking or removing the user
+void invite_cmd(std::vector<std::string> tokens, client_1 *user)
 {
     std::string name = tokens[1];
     std::string user_name = tokens[2];

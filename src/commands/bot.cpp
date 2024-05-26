@@ -34,6 +34,8 @@ void	help_to_connect(int fd)
 	putstr_fd(fd, "| /connect <address> <port> <password>                 |\n");
 	putstr_fd(fd, "| Example: /connect 127.0.0.1 8080 mypassword          |\n");
 	putstr_fd(fd, "|                                                      |\n");
+	putstr_fd(fd, "| You can also type /exit to leave the server          |\n");
+	putstr_fd(fd, "|                                                      |\n");
 	putstr_fd(fd, "+------------------------------------------------------+\n");
 }
 
@@ -42,7 +44,6 @@ void    help(int fd)
 	putstr_fd(fd, "+---------------| Assistance Bot at your service |-------------------+\n");
 	putstr_fd(fd, "|                                                                    |\n");
 	putstr_fd(fd, "|           List of Available Commands:                              |\n");
-	putstr_fd(fd, "| /FILEMSG <nickname> <file> - Send a file to a user                 |\n");
 	putstr_fd(fd, "| /nick <nickname> - Change your nickname                            |\n");
 	putstr_fd(fd, "| /nick - See your nickname                                          |\n");
 	putstr_fd(fd, "| /user <username> - Change your username                            |\n");
@@ -51,17 +52,22 @@ void    help(int fd)
 	putstr_fd(fd, "| /realname - See your real name                                     |\n");
 	putstr_fd(fd, "| /connect <address> <port> <password> - Connect to the server       |\n");
 	putstr_fd(fd, "| /PRIVMSG <nickname> <message> - Send a private message             |\n");
+	putstr_fd(fd, "| /FILEMSG <nickname> <file> - Send a file to a user                 |\n");
 	putstr_fd(fd, "| /quit - Disconnect from the server                                 |\n");
 	putstr_fd(fd, "|--------------------------------------------------------------------|\n");
 	putstr_fd(fd, "| /bot - Display this help message ;)                                |\n");
 	putstr_fd(fd, "|--------------------------------------------------------------------|\n");
 	putstr_fd(fd, "| /join #<channel> - Join a channel or create a new one if not exist |\n");
-	putstr_fd(fd, "| /KICK <channel> <user> - Eject a client from the channel           |\n");
-	putstr_fd(fd, "| /LEAVE <channel> - Leave a channel                                 |\n");
+	putstr_fd(fd, "| /CHMSG #<channel> <message> - Send a message to a channel          |\n");
+	putstr_fd(fd, "| (/KICK or /THROW) #<channel> <username> - Eject a client from      |\n");
+	putstr_fd(fd, "| the channel                                                        |\n");
+	putstr_fd(fd, "| /LEAVE #<channel> - Leave a channel                                |\n");
 	putstr_fd(fd, "| /LIST - List all available channels                                |\n");
-	putstr_fd(fd, "| /INVITE <channel> <user> - Invite a client to a channel            |\n");
-	putstr_fd(fd, "| /TOPIC <channel> [<topic>] - Change or view the channel topic      |\n");
-	putstr_fd(fd, "| /MODE <channel> <mode> - Change the channels mode                  |\n");
+	putstr_fd(fd, "| /INVITE #<channel> <username> - Invite a client to a channel       |\n");
+	putstr_fd(fd, "| /TOPIC #<channel> [<topic>] - Change or view the channel topic     |\n");
+	putstr_fd(fd, "| /TOPIC #<channel> - See the channel topic                          |\n");
+	putstr_fd(fd, "| /MODE #<channel> <mode> - Change the channels mode                 |\n");
+	putstr_fd(fd, "|  Available modes: - to remove and + to set                         |\n");
 	putstr_fd(fd, "|   i: Set/remove Invite-only channel                                |\n");
 	putstr_fd(fd, "|   t: Set/remove the restrictions of the TOPIC command to channel   |\n");
 	putstr_fd(fd, "|      operators                                                     |\n");
@@ -122,6 +128,18 @@ void	annonce_user_channel_leave(int fd, std::string channel, std::string nicknam
 	putstr_fd(fd, "| Goodbye to our friend!                               |\n");
 	putstr_fd(fd, "| " + nickname + " has left the channel:               \n");
 	putstr_fd(fd, "|                  ----> " + channel + " <----         \n");
+	putstr_fd(fd, "|                                                      |\n");
+	putstr_fd(fd, "+------------------------------------------------------+\n");
+}
+
+void	annonce_user_channel_kick(int fd, std::string channel, std::string nickname)
+{
+	putstr_fd(fd, "+---------------| Assistance Bot is Here |-------------+\n");
+	putstr_fd(fd, "|                                                      |\n");
+	putstr_fd(fd, "| Goodbye to our friend!                               |\n");
+	putstr_fd(fd, "| " + nickname + " has been kicked from the channel:   \n");
+	putstr_fd(fd, "|                  ----> " + channel + " <----         \n");
+	putstr_fd(fd, "| Reason: Because the admin wants to  				  |\n");
 	putstr_fd(fd, "|                                                      |\n");
 	putstr_fd(fd, "+------------------------------------------------------+\n");
 }

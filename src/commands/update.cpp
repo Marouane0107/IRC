@@ -71,7 +71,7 @@ void check_other_commands(std::string input, client_1 *user)
 		join_command(tokens, user);
 	}
 	
-	else if(tokens[0] == "/list\n" || tokens[0] == "list\n" || tokens[0] == "LIST\n" || tokens[0] == "/LIST\n")//if tokens[0] == "/list" list all the users in the channel manually
+	else if(tokens[0] == "/list\n" || tokens[0] == "list\n" || tokens[0] == "LIST\n" || tokens[0] == "/LIST\n")
 	{
 		if(user->_channels.size() == 0)
 			list_command(user->get_socket());

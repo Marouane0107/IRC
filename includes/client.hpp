@@ -75,6 +75,7 @@ void	help_to_connect(int fd);
 void    welcome_user_channel(int fd, std::string channel);
 void    goodbye_user_channel(int fd, std::string channel);
 void	annonce_user_channel_leave(int fd, std::string channel, std::string nickname);
+void	annonce_user_channel_kick(int fd, std::string channel, std::string nickname);
 void	annonce_user_channel(int fd, std::string channel, std::string nickname);
 void	user_get_kicked(int fd, std::string channel);
 void	help(int fd);

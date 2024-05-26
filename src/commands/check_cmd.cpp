@@ -41,7 +41,7 @@ void	client::check_cmd(int fd, std::string input)
 		PRIVMSG(fd, index, param, input);
 	else if((input.substr(start, end - 1) == "FILEMSG" && param_count(input) >= 3)) ////// --------- FILEMSG <nickname> <file>
 		FILEMSG(fd, index, param, input);
-	else if (get_flag(fd) > 0)
+	else if (get_flag(get_index_client(fd)) > 0)
 		file_confirmation(fd, index, input, start, end);
 	else
 		check_other_commands(input, all_clients[index]);

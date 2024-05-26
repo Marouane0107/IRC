@@ -12,7 +12,7 @@
 #include <sstream>
 #include <errno.h>
 
-const int MAX_CLIENTS = 100;
+const int MAX_CLIENTS = 3;
 const int MAX_BUFFER_SIZE = 1024;
 
 class Server;
@@ -25,7 +25,6 @@ class client
 		std::string _realname[MAX_CLIENTS];
 		std::string _save[MAX_CLIENTS];
 		int		_flag[MAX_CLIENTS];
-		int			socketfile;
         std::string _port;
         std::string _address;
 	public:
@@ -37,7 +36,6 @@ class client
 		std::string	get_save(int index);
         std::string	get_port();
         std::string	get_address();
-		int		get_socketfile();
 		int		get_fd(int index);
 		int		get_flag(int index);
 		int		get_fd_by_nickname(std::string nickname);
@@ -52,7 +50,7 @@ class client
 		void	set_port(std::string port);
 		void	set_flag(int flag, int index);
 		void	set_address(std::string address);
-		void	init_all(Server &sev);
+		void	init_all();
 		void	delete_client(int index);
 		int		check_max_clients();
 		int		check_input(std::string input, int fd, Server &sev);

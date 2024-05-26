@@ -174,7 +174,7 @@ void Server::InitServer(Server &sev)
 	ListenSocket();
 	
 	client user;
-	user.init_all(sev);
+	user.init_all();
 
 
 	epoll_fd = epoll_create1(0);

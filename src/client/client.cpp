@@ -41,11 +41,6 @@ std::string client::get_port()
 	return (_port);
 }
 
-int client::get_socketfile()
-{
-	return (socketfile);
-}
-
 std::string client::get_save(int index)
 {
 	return (_save[index]);
@@ -87,23 +82,6 @@ void	client::set_flag(int flag, int index)
 	_flag[index] = flag;
 }
 
-void	client::set_client(int fd)
-{
-	int index = 0;
-	while (index < MAX_CLIENTS)
-	{
-		if (_fd[index] <= 0 )
-		{
-			_fd[index] = fd;
-			_username[index] = "User" + ft_itos(index);
-			_nickname[index] = "Nickname" + ft_itos(index);
-			_realname[index] = "Unknown";
-			return ;
-		}
-		index++;
-	}
-}
-
 int client::get_flag(int index)
 {
 	return (_flag[index]);
@@ -141,9 +119,26 @@ void	client::delete_client(int index)
 	_save[index].clear();
 }
 
-void	client::init_all(Server &sev)
+void	client::set_client(int fd)
 {
-	socketfile = sev.get_socketfile();
+	int index = 0;
+	while (index < MAX_CLIENTS)
+	{
+		if (_fd[index] <= 0 )
+		{
+			_fd[index] = fd;
+			_flag[index] = 0;
+			_username[index] = "User" + ft_itos(index);
+			_nickname[index] = "Nickname" + ft_itos(index);
+			_realname[index] = "Unknown";
+			return ;
+		}
+		index++;
+	}
+}
+
+void	client::init_all()
+{
 	bzero(_flag, sizeof(_fd));
 	bzero(_fd, sizeof(_fd));
 	_nickname->clear();

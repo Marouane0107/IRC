@@ -56,7 +56,17 @@ void update_real_name_command(std::string real_name, std::string nick)
 		}
 	}
 }
-
+std::string get_super_admine_name(channel *ch)
+{
+	std::vector<client_1*>::iterator it;
+	it = ch->_clients.begin();
+	for(it = ch->_clients.begin(); it != ch->_clients.end(); it++)
+	{
+		if((*it)->get_super_admin() == 1)
+			return (*it)->get_name();
+	}
+	return "No super admin";
+}
 void check_other_commands(std::string input, client_1 *user)
 {
 	std::vector<std::string> tokens;
@@ -89,6 +99,7 @@ void check_other_commands(std::string input, client_1 *user)
 				for(i = 0; i < user->_channels.size(); i++)
 				{
 					message += "---------------------------------\n";
+					message += "admine name: " + get_super_admine_name(user->_channels[i]) + "\n";
 					message += user->_channels[i]->get_name() + " ";
 					message += ft_itos(user->_channels[i]->_clients.size()) + " users\n";
 					message += "Topic: " + user->_channels[i]->get_topic() + "\n";

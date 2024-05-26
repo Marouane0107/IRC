@@ -53,7 +53,6 @@ void Server::CreateSock()
 		std::cerr << "Error creating socket: " << strerror(errno) << std::endl;
 		exit(1);
 	}
-	std::cout << "Socket created: " << socketfile << std::endl;
 }
 
 void Server::BindSocket()
@@ -69,19 +68,16 @@ void Server::BindSocket()
 		std::cerr << "Error in setsockopt: " << strerror(errno) << std::endl;
 		exit(1);
 	}
-
 	if (fcntl(socketfile, F_SETFL, O_NONBLOCK) == -1)
 	{
 		std::cerr << "Error in fcntl: " << strerror(errno) << std::endl;
 		exit(1);
 	}
-
 	if (bind(socketfile, (struct sockaddr*)&add, sizeof(add)) == -1)
 	{
 		std::cerr << "Error in bind: " << strerror(errno) << std::endl;
 		exit(1);
 	}
-	std::cout << "Socket bound successfully" << std::endl;
 }
 
 void Server::ListenSocket()
@@ -91,7 +87,6 @@ void Server::ListenSocket()
 		std::cerr << "Error in listen: " << strerror(errno) << std::endl;
 		exit(1);
 	}
-	std::cout << "Listening on socket" << std::endl;
 }
 
 void Server::AcceptConnection()
@@ -104,7 +99,6 @@ void Server::AcceptConnection()
 		std::cerr << "Error in accept: " << strerror(errno) << std::endl;
 		return;
 	}
-	std::cout << "Accepted connection: " << acceptsocket << std::endl;
 	if (fcntl(acceptsocket, F_SETFL, O_NONBLOCK) == -1)
 	{
 		std::cerr << "Error in fcntl: " << strerror(errno) << std::endl;
@@ -183,7 +177,6 @@ void Server::InitServer(Server &sev)
 		std::cerr << "Error in epoll_create1: " << strerror(errno) << std::endl;
 		exit(1);
 	}
-	std::cout << "Epoll created" << std::endl;
 
 	epoll_event event;
 	event.events = EPOLLIN;

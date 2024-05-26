@@ -109,7 +109,7 @@ std::vector<client_1*> channel::get_admins(){
 }
 channel::channel(std::string name){
 	this->_name = name;
-	_topic = "no topic for this channel\n";
+	_topic = "No topic has been established yet";
 	_password = "";
 	channel_mode = 1;//public 
 	si_password_required = 0;

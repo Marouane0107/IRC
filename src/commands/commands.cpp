@@ -83,6 +83,14 @@ int check_if_user_in_channel(client_1 *user, channel *ch)
     }
     return 0;
 }
+void send_to_all_users_in_channel_kick(channel *ch, client_1 *user){
+    std::vector<client_1*>::iterator it;
+    for(it = ch->_clients.begin(); it != ch->_clients.end(); it++){
+        if((*it)->get_socket() != user->get_socket()){
+           annonce_user_channel_kick((*it)->get_socket(), ch->get_name(), user->get_name());
+        }
+    }
+}
 void KICK_command(client_1 *user,std::vector<channel*> ch, std::vector<std::string> tokens)
 {
     (void)ch;
@@ -119,10 +127,10 @@ void KICK_command(client_1 *user,std::vector<channel*> ch, std::vector<std::stri
                     return;
                 }
                 user_get_kicked((*it)->get_socket(), channel->get_name());
-                std::string message2 = (*it)->get_name() + " has been kicked from the channel -->" + channel->get_name() + "\n";
+                // std::string message2 = (*it)->get_name() + " has been kicked from the channel -->" + channel->get_name() + "\n";
                 channel->remove_admin_by_name((*it)->get_name());
                 channel->_clients.erase(std::remove(channel->_clients.begin(), channel->_clients.end(), (*it)), channel->_clients.end());
-                broadcast_message(channel, user, message2);
+                send_to_all_users_in_channel_kick(channel, user);
                 return;
             }
         }

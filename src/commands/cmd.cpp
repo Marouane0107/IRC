@@ -58,6 +58,7 @@ void    client::quit(int fd, int index)
     goodbye_message(fd);
 	std::cout << "A client has been disconnected" << std::endl;
 	delete_client(index);
+	delete_user_from_channel(fd);
 	close(fd);
 }
 

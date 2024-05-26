@@ -139,7 +139,7 @@ void	annonce_user_channel_kick(int fd, std::string channel, std::string nickname
 	putstr_fd(fd, "| Goodbye to our friend!                               |\n");
 	putstr_fd(fd, "| " + nickname + " has been kicked from the channel:   \n");
 	putstr_fd(fd, "|                  ----> " + channel + " <----         \n");
-	putstr_fd(fd, "| Reason: Because the admin wants to  				  |\n");
+	putstr_fd(fd, "| Reason: You can ask the admin for more information   |\n");
 	putstr_fd(fd, "|                                                      |\n");
 	putstr_fd(fd, "+------------------------------------------------------+\n");
 }

@@ -71,7 +71,7 @@ void send_to_all_clients_in_channel(channel *ch, client_1 *user){
     std::vector<client_1*>::iterator it;
     for(it = ch->_clients.begin(); it != ch->_clients.end(); it++){
         if((*it)->get_socket() != user->get_socket()){
-            annonce_user_channel((*it)->get_socket(), ch->get_name(), user->get_nick());
+            annonce_user_channel((*it)->get_socket(), ch->get_name(), user->get_name());//recheck
         }
     }
 }
@@ -137,17 +137,13 @@ void join_command(std::vector<std::string> tokens, client_1 *user)
         if(ch->get_channel_mode() == 1 && ch->_clients.size() < ch->get_number_of_clients()){
             ch->add_client(user);
             user->_channels.push_back(ch);
-            std::string message = user->get_name() + " has joined the channel" + ch->get_name() + "\n";
-            send(user->get_socket(), message.c_str(), message.size(), 0);
-            broadcast_message(ch, user, message);
+            // std::string message = user->get_name() + " has joined the channel" + ch->get_name() + "\n";
+            // send(user->get_socket(), message.c_str(), message.size(), 0);
+            // broadcast_message(ch, user, message);
             welcome_user_channel(user->get_socket(), ch->get_name());
             send_to_all_clients_in_channel(ch, user);
         }
         else{
-            std::cout <<"channel mode "<< ch->get_channel_mode() << std::endl;
-            std::cout <<"number of clients " << ch->_clients.size() << std::endl;
-            std::cout <<"|"<< ch->get_number_of_clients() << std::endl;
-            std::cout << MAX_CLIENTS << std::endl;
             send(user->get_socket(), "Channel is full, or it is invite only\n", strlen("Channel is full, or it is invite only\n"), 0);
         }
 }
@@ -156,7 +152,7 @@ void join_command(std::vector<std::string> tokens, client_1 *user)
 client_1* return_new_admine(channel *ch, client_1 old_admine){
     std::vector<client_1*>::iterator it;
     for(it = ch->_clients.begin(); it != ch->_clients.end(); it++){
-        if((*it)->get_name() != old_admine.get_name()){
+        if((*it)->get_name() != old_admine.get_name()){ 
             return *it;
         }
     }
@@ -218,6 +214,8 @@ void leave_channel(std::vector<std::string> tokens, client_1 *user){
     }
 }
 
+
+
 void leave_channels(std::string name,  client_1 *user){
     channel *ch = search_for_channel(name);
     if(ch == NULL){
@@ -232,14 +230,18 @@ void leave_channels(std::string name,  client_1 *user){
         }
         if(user->get_super_admin() == 1 && ch->_clients.size() >= 1){
             std::cout << "You are the super admin\n";
+            std::cout << user->get_super_admin() << std::endl;
+            std::cout << user->get_admin() << std::endl;
             // ch->remove_admin(user);//here
+            // std::cout << user->get_name() <<"||||||||||"<< ch->get_name() << std::endl;
             client_1 *new_admine = return_new_admine(ch, *user);
-            if(new_admine != NULL){
+            if(new_admine != NULL && new_admine->get_super_admin() == 0){
                 new_admine->set_super_admin(1);
                 new_admine->set_admin(1);
                 ch->add_admin(new_admine);
                 ch->get_admins().push_back(new_admine);
-                std::string message = "You are now the admin of the channel\n";
+                std::string message = "You are now the admin of the channel---------------->\n";
+                std::cout <<"---------------------"<< ch->_clients.size() << std::endl;
                 send(new_admine->get_socket(), message.c_str(), message.size(), 0);
                 //brodcast to the channel
                 std::string message2 = new_admine->get_name() + "-----------> is the new admin of the channel\n";

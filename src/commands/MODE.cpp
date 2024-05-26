@@ -8,7 +8,7 @@ void channel::add_admin(client_1 *cl)
 {
     cl->set_admin(1);
     _admins.push_back(cl);
-    putstr_fd(cl->get_socket(), "You are now an admin\n");
+    putstr_fd(cl->get_socket(), "IRC: You are now an admin\n");
 }
 
 void channel::remove_admin(client_1 *cl)
@@ -52,7 +52,7 @@ void channel::set_si_password_required(int si_password_required)
 void channel::set_name(std::string name)
 {
     _name = name;
-    std::cout << "Channel name set to: " << _name << std::endl;
+    std::cout << "IRC: Channel name set to: " << _name << std::endl;
 }
 
 std::string channel::get_topic()
@@ -273,7 +273,7 @@ void topic_cmd(std::vector<std::string> tokens, client_1 *user)//need to chenge
         return;
     }
     if(tokens.size() == 2){//get topic
-        std::string msg = "IRC :The topic is: " + ch->get_topic() + "\n";
+        std::string msg = "IRC :The topic is: " + ch->get_topic();
         putstr_fd(user->get_socket(), msg.c_str());
     }
     if(tokens.size() > 2){//set topic
@@ -358,8 +358,6 @@ void remove_user_form_all_channels(std::string name)
         size_t max = user->_channels.size();
         std::vector<channel*> ch = user->_channels;
         for(size_t i = 0; i < max; i++){
-            std::cout << "Channel name: " << ch[i]->get_name() <<"|=======|"<< "===|" << std::endl;
-            std::cout << i << "|=======|" << max << std::endl;
             leave_channels(ch[i]->get_name(), user);
         }
     }

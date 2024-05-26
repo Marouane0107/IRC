@@ -37,7 +37,7 @@ void	client::check_cmd(int fd, std::string input)
 		help(fd);
 	else if (input.substr(start, end - 1) == "connect")
 		putstr_fd(fd, "IRC: You are already connected to the server\n");
-	else if (input.substr(start, end - 1) == "PRIVMSG" && param_count(input) >= 3 && param[0] != '#') ////// --------- PRIVMSG <nickname> <message>
+	else if (input.substr(start, end - 1) == "PRIVMSG" && param_count(input) >= 3) ////// --------- PRIVMSG <nickname> <message>
 		PRIVMSG(fd, index, param, input);
 	else if((input.substr(start, end - 1) == "FILEMSG" && param_count(input) >= 3)) ////// --------- FILEMSG <nickname> <file>
 		FILEMSG(fd, index, param, input);

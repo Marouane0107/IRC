@@ -176,7 +176,12 @@ void send_to_all_users_in_channel(channel *ch, client_1 *user){
         }
     }
 }
-
+void print_all_users_in_channel(channel *ch){
+    std::vector<client_1*>::iterator it;
+    for(it = ch->_clients.begin(); it != ch->_clients.end(); it++){
+        std::cout <<"--------------------->:"<< (*it)->get_name() << std::endl;
+    }
+}
 void leave_channel(std::vector<std::string> tokens, client_1 *user){
     std::string name = tokens[1];
     remove_char(name, '\n');
@@ -195,6 +200,7 @@ void leave_channel(std::vector<std::string> tokens, client_1 *user){
         }
         
         if(user->get_super_admin() == 1 && ch->_clients.size() >= 1){
+            print_all_users_in_channel(ch);
             ch->remove_admin(user);
             client_1 *new_admine = return_new_admine(ch, *user);
             if(new_admine != NULL){
@@ -229,13 +235,8 @@ void leave_channels(std::string name,  client_1 *user){
             all_channels.erase(std::remove(all_channels.begin(), all_channels.end(), ch), all_channels.end());
         }
         if(user->get_super_admin() == 1 && ch->_clients.size() >= 1){
-            std::cout << "You are the super admin\n";
-            std::cout << user->get_super_admin() << std::endl;
-            std::cout << user->get_admin() << std::endl;
-            // ch->remove_admin(user);//here
-            // std::cout << user->get_name() <<"||||||||||"<< ch->get_name() << std::endl;
             client_1 *new_admine = return_new_admine(ch, *user);
-            if(new_admine != NULL && new_admine->get_super_admin() == 0){
+            if(new_admine != NULL){
                 new_admine->set_super_admin(1);
                 new_admine->set_admin(1);
                 ch->add_admin(new_admine);

@@ -95,7 +95,7 @@ void check_other_commands(std::string input, client_1 *user)
 			else
 			{
 				size_t i;
-				std::string message = "List of channels that you are in \n";
+				std::string message = "List of channels\n";
 				for(i = 0; i < user->_channels.size(); i++)
 				{
 					message += "---------------------------------\n";

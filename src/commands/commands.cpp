@@ -11,7 +11,7 @@ void remove(channel *ch, client_1 *user)
     for(size_t i = 0; i < arr.size(); i++){
         if(arr[i]->get_socket() == user->get_socket()){
             ch->remove_admin(user);
-            std::string message = "You are no longer an admin\n";
+            std::string message = "no longer an admin\n";
             send(user->get_socket(), message.c_str(), message.size(), 0);
             break;
         }

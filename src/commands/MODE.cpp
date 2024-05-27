@@ -108,7 +108,7 @@ void MODE_command(std::vector<std::string> option, client_1 *user)
         return;
     }
     if(option[2] == "+i\n" || option[2] == "+i"){//invite only mode to channel
-        if(ch->check_if_admin(user) == 0){
+        if(ch->check_if_admin(user, ch) == 0){
             putstr_fd(user->get_socket(), "IRC :You are not allowed\n");
             return;
         }
@@ -118,7 +118,7 @@ void MODE_command(std::vector<std::string> option, client_1 *user)
         }
     }
     else if(option[2] == "-i\n" || option[2] == "-i"){//public mode to channel
-        if(ch->check_if_admin(user) == 0){
+        if(ch->check_if_admin(user, ch) == 0){
             putstr_fd(user->get_socket(), "IRC :You are not allowed\n");
             return;
         }
@@ -128,7 +128,7 @@ void MODE_command(std::vector<std::string> option, client_1 *user)
         }
     }
     else if(option[2] == "-t\n"|| option[2] == "-t"){
-        if(ch->check_if_admin(user) == 0){
+        if(ch->check_if_admin(user, ch) == 0){
             putstr_fd(user->get_socket(), "IRC :You are not allowed\n");
             return;
         }
@@ -138,7 +138,7 @@ void MODE_command(std::vector<std::string> option, client_1 *user)
         }
     }
     else if(option[2] == "+t\n" || option[2] == "+t"){
-        if(ch->check_if_admin(user) == 0){
+        if(ch->check_if_admin(user, ch) == 0){
             putstr_fd(user->get_socket(), "IRC :You are not allowed\n");
             return;
         }
@@ -148,7 +148,7 @@ void MODE_command(std::vector<std::string> option, client_1 *user)
     }
     }
     else if(option[2] == "+k"){
-        if(ch->check_if_admin(user) == 0){
+        if(ch->check_if_admin(user, ch) == 0){
             putstr_fd(user->get_socket(), "IRC :You are not allowed\n");
             return;
         }
@@ -160,7 +160,7 @@ void MODE_command(std::vector<std::string> option, client_1 *user)
         }
     }
     else if(option[2] == "-k\n" || option[2] == "-k"){
-        if(ch->check_if_admin(user) == 0){
+        if(ch->check_if_admin(user, ch) == 0){
             putstr_fd(user->get_socket(), "IRC :You are not allowed\n");
             return;
         }
@@ -181,7 +181,7 @@ void MODE_command(std::vector<std::string> option, client_1 *user)
             putstr_fd(user->get_socket(), "IRC :User is not in the channel\n");
             return;
         }
-        if(ch->check_if_admin(cl) == 1){
+        if(ch->check_if_admin(cl, ch) == 1){
             putstr_fd(user->get_socket(), "IRC :User is already an admin\n");
             return;
         }
@@ -201,7 +201,7 @@ void MODE_command(std::vector<std::string> option, client_1 *user)
             putstr_fd(user->get_socket(), "IRC :User is not in the channel\n");
             return;
         }
-        if(ch->check_if_admin(cl) == 0){
+        if(ch->check_if_admin(cl, ch) == 0){
             putstr_fd(user->get_socket(), "IRC :User is not an admin\n");
             return;
         }
@@ -210,7 +210,7 @@ void MODE_command(std::vector<std::string> option, client_1 *user)
         putstr_fd(user->get_socket(), "IRC: User is no longer an admin\n");
     }
     else if(option[2] == "-l" || option[2] == "-l\n"){//max client not required
-        if(ch->check_if_admin(user) == 0){
+        if(ch->check_if_admin(user, ch) == 0){
             putstr_fd(user->get_socket(), "IRC: You are not allowed\n");
             return;
         }
@@ -227,7 +227,7 @@ void MODE_command(std::vector<std::string> option, client_1 *user)
             return;
         }
         size_t max_clients = atoi(option[3].c_str());
-        if(ch->check_if_admin(user) == 0){
+        if(ch->check_if_admin(user, ch) == 0){
             putstr_fd(user->get_socket(), "IRC: You are not allowed\n");
             return;
         }
@@ -272,7 +272,7 @@ void topic_cmd(std::vector<std::string> tokens, client_1 *user)//need to chenge
         putstr_fd(user->get_socket(), msg.c_str());
     }
     if(tokens.size() > 2){//set topic
-        if(ch->get_topic_changeable() == 0 && ch->check_if_admin(user) == 0){
+        if(ch->get_topic_changeable() == 0 && ch->check_if_admin(user, ch) == 0){
             putstr_fd(user->get_socket(), "IRC :You are not allowed\n");
             return;
         }

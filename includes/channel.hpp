@@ -78,7 +78,7 @@ class channel
         std::string get_password();
         int get_channel_mode();
         int get_si_password_required();
-        int check_if_admin(client_1 *cl);
+        int check_if_admin(client_1 *cl,channel *ch);
         void set_topic_changeable(int topic_changeable);
         int get_topic_changeable();
         std::vector<client_1*> get_admins();

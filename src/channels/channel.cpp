@@ -14,12 +14,13 @@ std::string client_1::get_real_name(){
 	return this->real_name;
 }
 
-int channel::check_if_admin(client_1 *cl){
+int channel::check_if_admin(client_1 *cl, channel *ch){
 	std::vector<client_1*>::iterator it;
-	//check if the client is an admin
-	for(it = _admins.begin(); it != _admins.end(); it++){
+	for(it = ch->_admins.begin(); it != ch->_admins.end(); it++){
 		if((*it)->get_socket() == cl->get_socket()){
-			return 1;
+			if((*it)->get_admin() == 1 || (*it)->get_super_admin() == 1){
+				return 1;
+			}
 		}
 	}
 	return 0;
@@ -64,7 +65,7 @@ void channel::remove_admin_by_name(std::string name){
 		if((*it)->get_name() == name){
 			(*it)->set_admin(0);
 			_admins.erase(std::remove(_admins.begin(), _admins.end(), *it), _admins.end());
-			send((*it)->get_socket(), "You are no longer an admin\n", strlen("You are no longer an admin\n"), 0);
+			send((*it)->get_socket(), "no longer an admin\n", strlen("no longer an admin\n"), 0);
 			return;
 		}
 	}

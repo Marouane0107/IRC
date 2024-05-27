@@ -20,11 +20,11 @@ class client
 {
 	private:
 		int _fd[MAX_CLIENTS];
+		int		_flag[MAX_CLIENTS];
 		std::string _username[MAX_CLIENTS];
 		std::string _nickname[MAX_CLIENTS];
 		std::string _realname[MAX_CLIENTS];
 		std::string _save[MAX_CLIENTS];
-		int		_flag[MAX_CLIENTS];
         std::string _port;
         std::string _address;
 	public:
@@ -41,7 +41,6 @@ class client
 		int		get_fd_by_nickname(std::string nickname);
 		int		get_index_client(int fd);
 
-
 		void	set_client(int fd);
 		void	set_save(std::string save, int index);
 		void	set_nickname(std::string nickname, int index);
@@ -50,6 +49,7 @@ class client
 		void	set_port(std::string port);
 		void	set_flag(int flag, int index);
 		void	set_address(std::string address);
+
 		void	init_all();
 		void	delete_client(int index);
 		int		check_max_clients();
@@ -80,16 +80,15 @@ void	annonce_user_channel(int fd, std::string channel, std::string nickname);
 void	user_get_kicked(int fd, std::string channel);
 void	help(int fd);
 void	goodbye_message(int fd);
-//-------------------------------------------------------------+
-
-int check_ip_port(int fd, std::string input, Server &sev);
-std::string	ft_itos(int value); // Convert int to string
-std::string	get_str_no_space(std::string input);
+//-------------------------------------------------------------+ utils
 std::string	one_by_one(std::string input, size_t *start);
+std::string	ft_itos(int value);
+std::string	get_str_no_space(std::string input);
 std::string	get_param(std::string input, int param_number, int flag);
+void		putstr_fd(int fd, std::string str);
+int			check_ip_port(int fd, std::string input, Server &sev);
 int			param_count(std::string input);
 int			get_len_no_space(std::string input, size_t start);
 int			skep_space(std::string input, size_t start);
-void		putstr_fd(int fd, std::string str);
 
 #endif

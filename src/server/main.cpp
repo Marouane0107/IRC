@@ -1,19 +1,5 @@
 #include "../../includes/server.hpp"
 
-void handle_signal(int signal)
-{
-    if (signal == SIGINT)
-        exit(0);
-	else if (signal == SIGTSTP)
-        raise(SIGSTOP);
-}
-
-void setup_signal_handlers()
-{
-    signal(SIGINT, handle_signal);
-    signal(SIGTSTP, handle_signal);
-}
-
 bool is_digits(const std::string &str)
 {
     return (str.find_first_not_of("0123456789") == std::string::npos);
@@ -49,7 +35,6 @@ int main(int ac, char **av)
         return (1);
     }
     check_port(av[1]);
-    setup_signal_handlers();
     Server sev(av[1], av[2]);
     sev.InitServer(sev);
 }

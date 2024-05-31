@@ -8,7 +8,7 @@ This project is a comprehensive exploration of computer networking and communica
   This repository contains the source code and documentation for the ft_irc project. In this README,
 I will introduce you to the core concepts and provide a guide to understanding and running the IRC server. We will cover essential topics such as socket programming, connection management, and data exchange.
 
-What You Will Learn
+_What You Will Learn_
 By exploring this project, you will gain a solid understanding of:
 
 Socket Programming: Creating and managing sockets for network communication.

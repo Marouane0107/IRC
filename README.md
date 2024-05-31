@@ -1,4 +1,5 @@
 ft_irc Project
+
 Introduction
 
 Welcome to the ft_irc project! As part of my journey at 1337 School, I have developed this IRC (Internet Relay Chat) server from scratch using C++. This project is a comprehensive exploration of computer networking and communication protocols, providing hands-on experience with the fundamentals of network programming.

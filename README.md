@@ -1,10 +1,12 @@
----------------------------------------------------------------->     ft_irc Project   <---------------------------------------------------------------
+---------------------------------------------------------------->     __ft_irc Project__   <---------------------------------------------------------------
 
-Introduction
+__Introduction__
 
-Welcome to the ft_irc project! As part of my journey at 1337 School, I have developed this IRC (Internet Relay Chat) server from scratch using C++. This project is a comprehensive exploration of computer networking and communication protocols, providing hands-on experience with the fundamentals of network programming.
+  Welcome to the ft_irc project! As part of my journey at 1337 School, I have developed this IRC (Internet Relay Chat) server from scratch using C++.
+This project is a comprehensive exploration of computer networking and communication protocols, providing hands-on experience with the fundamentals of network programming.
 
-This repository contains the source code and documentation for the ft_irc project. In this README, I will introduce you to the core concepts and provide a guide to understanding and running the IRC server. We will cover essential topics such as socket programming, connection management, and data exchange.
+  This repository contains the source code and documentation for the ft_irc project. In this README,
+I will introduce you to the core concepts and provide a guide to understanding and running the IRC server. We will cover essential topics such as socket programming, connection management, and data exchange.
 
 What You Will Learn
 By exploring this project, you will gain a solid understanding of:
